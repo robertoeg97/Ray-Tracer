@@ -4,8 +4,7 @@
 #include "Vector3D.h"
 #include "Ray3D.h"
 
-class HitRecord {
-public:
+struct HitRecord {
     Vector3D point {};
     Vector3D normal {};
     float_type t;

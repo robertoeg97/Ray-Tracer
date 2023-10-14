@@ -16,11 +16,11 @@ private:
 
     float_type hit_sphere(const Sphere& sphere) const {
         Vector3D center_to_origin = origin() - sphere.center;
-        //use formula: -b+-sqrt(b*b-4ac)/(2a) = -half_b+-sqrt(half_b*half_b-ac)/(a)
+        
         float_type a = direction().dot(direction());
         float_type half_b = direction().dot(center_to_origin);
-        float_type t = center_to_origin.dot(center_to_origin) - sphere.radius*sphere.radius;
-        float_type discriminant = half_b*half_b - a*t;
+        float_type c = center_to_origin.dot(center_to_origin) - sphere.radius*sphere.radius;
+        float_type discriminant = half_b*half_b - a*c;
         if (discriminant < 0) {
             return -1.0;
         } 
