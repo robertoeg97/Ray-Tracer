@@ -19,8 +19,8 @@ private:
         //use formula: -b+-sqrt(b*b-4ac)/(2a) = -half_b+-sqrt(half_b*half_b-ac)/(a)
         float_type a = direction().dot(direction());
         float_type half_b = direction().dot(center_to_origin);
-        float_type c = center_to_origin.dot(center_to_origin) - sphere.radius*sphere.radius;
-        float_type discriminant = half_b*half_b - a*c;
+        float_type t = center_to_origin.dot(center_to_origin) - sphere.radius*sphere.radius;
+        float_type discriminant = half_b*half_b - a*t;
         if (discriminant < 0) {
             return -1.0;
         } 
@@ -35,15 +35,15 @@ public:
     Vector3D origin() const  {return m_origin;}
     Vector3D direction() const { return m_direction;}
 
-    Vector3D at(float_type c) const {
-        return {m_origin + m_direction*c};
+    Vector3D at(float_type t) const {
+        return {m_origin + m_direction*t};
     }
 
     Color color() const {
         Sphere sphere {{0, 0, -1}, .5};
-        float_type c = hit_sphere(sphere);
-        if (c > 0) {
-            Vector3D normal = at(c) - sphere.center;
+        float_type t = hit_sphere(sphere);
+        if (t > 0) {
+            Vector3D normal = at(t) - sphere.center;
             Vector3D unit_normal = normal.unit_vector();
             //0 unit normal component gives a value of 0 for the corresponding RGB, and 1 unit normal gives max val
             return .5 * (Color(unit_normal.x()+1, unit_normal.y()+1, unit_normal.z()+1));   

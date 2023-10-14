@@ -39,18 +39,18 @@ public:
         return *this = *this - other;
     }
 
-    constexpr Derived operator*(float_type c) const {
-        return {c*m_vec[0], c*m_vec[1], c*m_vec[2]};
+    constexpr Derived operator*(float_type t) const {
+        return {t*m_vec[0], t*m_vec[1], t*m_vec[2]};
     }
-    constexpr Derived& operator*=(float_type c) {
-        return *this = *this * c;
+    constexpr Derived& operator*=(float_type t) {
+        return *this = *this * t;
     }
 
-    constexpr Derived operator/(float_type c) const {
-        return *this * (1/c);
+    constexpr Derived operator/(float_type t) const {
+        return *this * (1/t);
     }
-    constexpr Derived& operator/=(float_type c) {
-        return *this = *this / c;
+    constexpr Derived& operator/=(float_type t) {
+        return *this = *this / t;
     }
 
     float_type length() const {
@@ -76,9 +76,9 @@ public:
 };
 
 template <typename T>
-constexpr inline T operator*(float_type c, const Triple<T>& trip) {
+constexpr inline T operator*(float_type t, const Triple<T>& trip) {
     const T& derived_trip = static_cast<const T&>(trip);   
-    return derived_trip * c;
+    return derived_trip * t;
 }
 
 template <typename T>
