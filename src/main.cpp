@@ -8,7 +8,7 @@
 int main() {
     //image info
     constexpr float_type aspect_ratio = 16.0/9.0;
-    constexpr int image_width = 256;
+    constexpr int image_width = 400;
     constexpr int image_height = std::max(static_cast<int>(image_width/aspect_ratio), 1);
 
     //camera info
@@ -24,8 +24,8 @@ int main() {
     constexpr Vector3D viewport_v {0, -viewport_height, 0};
 
     //initilaize delta vectors (1 pixel long)
-    constexpr Vector3D pixel_delta_u = viewport_u / viewport_width;
-    constexpr Vector3D pixel_delta_v = viewport_v / viewport_height;
+    constexpr Vector3D pixel_delta_u = viewport_u / image_width;
+    constexpr Vector3D pixel_delta_v = viewport_v / image_height;
 
     //determine the location of the upper left pixel
     constexpr Vector3D viewport_upper_left = camera_center - Vector3D{0, 0, focal_length} - viewport_u/2 - viewport_v/2;
@@ -39,10 +39,14 @@ int main() {
             Vector3D pixel_center = pixel0_loc + i*pixel_delta_u + j*pixel_delta_v;
             Ray3D pixel_ray {camera_center, pixel_center - camera_center};
             Color pixel_color = pixel_ray.color();
+            /*std::cout << "height: " << j << "  width: " << i << '\n';
+            std::cout << "pixel: " << pixel_center.x() << ' ' << pixel_center.y() << ' ' << pixel_center.z() << '\n';
+            std::cout << "direction: " << pixel_ray.direction().unit_vector().x() << ' ' << pixel_ray.direction().unit_vector().y() << ' ' << pixel_ray.direction().unit_vector().z() << '\n';
+            */
             pixel_color.write_pixel(std::cout);
         }
     }
-    std::clog << "\rDone.\n";
+    std::clog << "\rDone.                     \n";
 
     return 0;
 }

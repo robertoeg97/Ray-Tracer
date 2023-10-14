@@ -15,9 +15,9 @@ public:
     using Triple<Color>::Triple;    //inherit base class constructors
 
     void write_pixel(std::ostream& out) const {
-        out << static_cast<int>(x() * (max_pixel_val+.9999)) << ' '
-            << static_cast<int>(y() * (max_pixel_val+.9999)) << ' '
-            << static_cast<int>(z() * (max_pixel_val+.9999)) << '\n';
+        out << static_cast<int>(x() * (max_pixel_val+.999)) << ' '
+            << static_cast<int>(y() * (max_pixel_val+.999)) << ' '
+            << static_cast<int>(z() * (max_pixel_val+.999)) << '\n';
     }
 };
 

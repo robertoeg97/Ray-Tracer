@@ -30,9 +30,9 @@ public:
     }
 
     Color color() const {
-        if (hit_sphere(Vector3D(0, 0, -1), .5)) {
+        /*if (hit_sphere(Vector3D(0, 0, -1), .5)) {
             return Color(1, 0, 0);
-        }
+        }*/
 
         Vector3D unit_direction = m_direction.unit_vector();
         float_type a = .5 * (unit_direction.y() + 1.0);
