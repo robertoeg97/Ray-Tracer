@@ -38,7 +38,8 @@ int main() {
         for (int i = 0; i < image_width; ++i) {
             Vector3D pixel_center = pixel0_loc + i*pixel_delta_u + j*pixel_delta_v;
             Ray3D pixel_ray {camera_center, pixel_center - camera_center};
-            Color pixel_color = pixel_ray.color();
+            Sphere sphere {{0, 0, -1}, .5};
+            Color pixel_color = color_pixel(pixel_ray, sphere);
             pixel_color.write_pixel(std::cout);
         }
     }

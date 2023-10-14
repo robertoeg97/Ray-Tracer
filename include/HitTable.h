@@ -6,8 +6,8 @@
 class Ray3D;
 
 struct HitRecord {
-    Vector3D point {};
-    Vector3D unit_normal {};
+    Vector3D point;
+    Vector3D unit_normal;
     float_type t;
 };
 

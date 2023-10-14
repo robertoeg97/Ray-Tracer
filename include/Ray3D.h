@@ -20,18 +20,6 @@ public:
     Vector3D at(float_type t) const {
         return {m_origin + m_direction*t};
     }
-
-    /*Color color() const {
-        Sphere sphere {{0, 0, -1}, .5};
-        HitRecord rec;
-        if (sphere.hit(*this, 0, INT_MAX, rec)) {
-            return .5 * (Color(rec.unit_normal.x()+1, rec.unit_normal.y()+1, rec.unit_normal.z()+1));   
-        }
-
-        Vector3D unit_direction = m_direction.unit_vector();
-        float_type a = .5 * (unit_direction.y() + 1.0);
-        return (1.0-a)*Color(1, 1, 1) + a*Color(.5, .7, 1);
-    }*/
 };
 
 #endif
