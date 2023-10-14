@@ -9,13 +9,22 @@ private:
     Vector3D m_origin {};
     Vector3D m_direction {};
 
-    bool hit_sphere(const Vector3D& center, const float_type radius) const {
-        Vector3D origin_to_center = origin() - center;
+    struct Sphere {
+        Vector3D center;
+        float_type radius;
+    };
+
+    float_type hit_sphere(const Sphere& sphere) const {
+        Vector3D center_to_origin = origin() - sphere.center;
         float_type a = direction().dot(direction());
-        float_type b = 2.0 * direction().dot(origin_to_center);
-        float_type c = origin_to_center.dot(origin_to_center) - radius*radius;
+        float_type b = 2.0 * direction().dot(center_to_origin);
+        float_type c = center_to_origin.dot(center_to_origin) - sphere.radius*sphere.radius;
         float_type discriminant = b*b - 4*a*c;
-        return discriminant >= 0;   
+        if (discriminant < 0) {
+            return -1.0;
+        } 
+        //subtracting discriminant gives us the constant to find the contact point closest to us
+        return (-b - std::sqrt(discriminant)) / (2.0*a);    
     }
 
 public:
@@ -30,8 +39,13 @@ public:
     }
 
     Color color() const {
-        if (hit_sphere(Vector3D(0, 0, -1), .5)) {
-            return Color(1, 0, 0);
+        Sphere sphere {{0, 0, -1}, .5};
+        float_type c = hit_sphere(sphere);
+        if (c > 0) {
+            Vector3D normal = at(c) - sphere.center;
+            Vector3D unit_normal = normal.unit_vector();
+            //0 unit normal component gives a value of 0 for the corresponding RGB, and 1 unit normal gives max val
+            return .5 * (Color(unit_normal.x()+1, unit_normal.y()+1, unit_normal.z()+1));   
         }
 
         Vector3D unit_direction = m_direction.unit_vector();

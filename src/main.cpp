@@ -39,10 +39,6 @@ int main() {
             Vector3D pixel_center = pixel0_loc + i*pixel_delta_u + j*pixel_delta_v;
             Ray3D pixel_ray {camera_center, pixel_center - camera_center};
             Color pixel_color = pixel_ray.color();
-            /*std::cout << "height: " << j << "  width: " << i << '\n';
-            std::cout << "pixel: " << pixel_center.x() << ' ' << pixel_center.y() << ' ' << pixel_center.z() << '\n';
-            std::cout << "direction: " << pixel_ray.direction().unit_vector().x() << ' ' << pixel_ray.direction().unit_vector().y() << ' ' << pixel_ray.direction().unit_vector().z() << '\n';
-            */
             pixel_color.write_pixel(std::cout);
         }
     }
