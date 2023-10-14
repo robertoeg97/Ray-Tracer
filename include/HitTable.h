@@ -2,11 +2,12 @@
 #define HITTABLE_H
 
 #include "Vector3D.h"
-#include "Ray3D.h"
+
+class Ray3D;
 
 struct HitRecord {
     Vector3D point {};
-    Vector3D normal {};
+    Vector3D unit_normal {};
     float_type t;
 };
 

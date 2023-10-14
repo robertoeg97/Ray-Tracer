@@ -3,6 +3,7 @@
 
 #include "Hittable.h"
 #include "Vector3D.h"
+#include "Ray3D.h"
 
 class Sphere : public Hittable {
 private:
@@ -13,14 +14,16 @@ public:
     Sphere (const Vector3D& center, float_type radius) : m_center{center}, m_radius{radius} {}
 
     /**
-     * @brief determines whether the ray intersects a surface of the sphere, 
+     * @brief Determines whether the ray intersects the surface of the sphere. 
+     * In the case of two solutions, the lower value of t is returned.
      * 
-     * @param ray 
-     * @param ray_tmin 
-     * @param ray_tmax 
-     * @param rec 
-     * @return true 
-     * @return false 
+     * @param ray The ray to check.
+     * @param ray_tmin The minimum ray constant that results in an accepted solution.
+     * @param ray_tmax The maximum ray constant that results in an accepted solution.
+     * @param rec In a successful hit, the member variables will be updated to show the hit information.
+     * If no successful hit is found, rec is unmodified.
+     * @return true if the ray intesects a surface of the sphere within tay_tmin and ray_tmax.
+     * @return false otherwise
      */
     bool hit(const Ray3D& ray, float_type ray_tmin, float_type ray_tmax, HitRecord& rec) const override {
         //quadratic formula to find where the ray hits the sphere surface
@@ -48,7 +51,7 @@ public:
         //pass hit information through hit record
         rec.t = root;
         rec.point = ray.at(rec.t);
-        rec.normal = (rec.point - m_center) / m_radius;
+        rec.unit_normal = (rec.point - m_center) / m_radius;
 
         return true;
     }
