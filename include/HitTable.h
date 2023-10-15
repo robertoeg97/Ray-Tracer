@@ -11,6 +11,13 @@ struct HitRecord {
     float_type t;
     bool front_face;
 
+    /**
+     * @brief Sets the unit_normal of the object to always point towards the intersecting ray. 
+     * Sets front_face to true if the ray intersected the object from the outside, and false from the inside.
+     * 
+     * @param ray 
+     * @param outward_unit_normal 
+     */
     void set_face_and_normal(const Ray3D& ray, const Vector3D& outward_unit_normal) {
         front_face = ray.direction().dot(outward_unit_normal) < 0;
         unit_normal = front_face ? outward_unit_normal : -outward_unit_normal;
