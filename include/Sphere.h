@@ -20,12 +20,10 @@ public:
      * @param ray The ray to check.
      * @param ray_tmin The minimum ray constant that results in an accepted solution.
      * @param ray_tmax The maximum ray constant that results in an accepted solution.
-     * @param rec In a successful hit, the member variables will be updated to show the hit information.
-     * If no successful hit is found, rec is unmodified.
      * @return true if the ray intesects a surface of the sphere within tay_tmin and ray_tmax.
      * @return false otherwise
      */
-    bool hit(const Ray3D& ray, float_type ray_tmin, float_type ray_tmax, HitRecord& rec) const override {
+    HitResult hit(const Ray3D& ray, float_type ray_tmin, float_type ray_tmax) const override {
         //quadratic formula to find where the ray hits the sphere surface
         Vector3D center_to_origin = ray.origin() - m_center;
         //use formula: -b+-sqrt(b*b-4ac)/(2a) = -half_b+-sqrt(half_b*half_b-ac)/(a)
@@ -34,7 +32,7 @@ public:
         float_type c = center_to_origin.dot(center_to_origin) - m_radius*m_radius;
         float_type discriminant = half_b*half_b - a*c;
         if (discriminant < 0) {
-            return false;
+            return {false, HitRecord{}};
         } 
         float_type sqrtd = std::sqrt(discriminant);
         
@@ -44,17 +42,18 @@ public:
         if (root < ray_tmin || root > ray_tmax) {
             root = -(half_b + sqrtd) / (a);     //adding discriminant gives higher root
             if (root < ray_tmin || root > ray_tmax) {
-                return false;
+                return {false, HitRecord{}};
             }
         }
 
         //pass hit information through hit record
+        HitRecord rec;
         rec.t = root;
         rec.point = ray.at(rec.t);
         Vector3D outward_unit_normal = (rec.point - m_center) / m_radius;
         rec.set_face_and_normal(ray, outward_unit_normal);
 
-        return true;
+        return {true, rec};
     }
 };
 

@@ -24,9 +24,9 @@ public:
 };
 
 inline Color color_pixel(const Ray3D& pixel_ray, const Sphere& sphere) {
-        HitRecord rec;
-        if (sphere.hit(pixel_ray, 0, INT_MAX, rec)) {
-            return .5 * (Color(rec.unit_normal.x()+1, rec.unit_normal.y()+1, rec.unit_normal.z()+1));   
+        auto [is_hit, hit_record] = sphere.hit(pixel_ray, 0, INT_MAX);
+        if (is_hit) {
+            return .5 * (Color(hit_record.unit_normal.x()+1, hit_record.unit_normal.y()+1, hit_record.unit_normal.z()+1));   
         }
 
         Vector3D unit_direction = pixel_ray.direction().unit_vector();
