@@ -51,7 +51,8 @@ public:
         //pass hit information through hit record
         rec.t = root;
         rec.point = ray.at(rec.t);
-        rec.unit_normal = (rec.point - m_center) / m_radius;
+        Vector3D outward_unit_normal = (rec.point - m_center) / m_radius;
+        rec.set_face_and_normal(ray, outward_unit_normal);
 
         return true;
     }

@@ -9,6 +9,12 @@ struct HitRecord {
     Vector3D point;
     Vector3D unit_normal;
     float_type t;
+    bool front_face;
+
+    void set_face_and_normal(const Ray3D& ray, const Vector3D& outward_unit_normal) {
+        front_face = ray.direction().dot(outward_unit_normal) < 0;
+        unit_normal = front_face ? outward_unit_normal : -outward_unit_normal;
+    }
 };
 
 class Hittable {
