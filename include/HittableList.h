@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include "Constants.h"
 #include "Hittable.h"
 #include "Ray3D.h"
 

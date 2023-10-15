@@ -1,6 +1,7 @@
 #ifndef RAY3D_H
 #define RAY3D_H
 
+#include "Constants.h"
 #include "Vector3D.h"
 #include "Color.h"
 

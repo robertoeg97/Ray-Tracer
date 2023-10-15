@@ -4,8 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <array>
-
-using float_type = float;
+#include "Constants.h"
 
 template <typename Derived> 
 class Triple {

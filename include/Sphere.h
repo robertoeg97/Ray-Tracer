@@ -1,6 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include "Constants.h"
 #include "Hittable.h"
 #include "Vector3D.h"
 #include "Ray3D.h"

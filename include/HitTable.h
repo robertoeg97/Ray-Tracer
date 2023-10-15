@@ -1,6 +1,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include "Constants.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
 

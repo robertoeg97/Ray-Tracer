@@ -1,11 +1,20 @@
 #include <iostream>
 #include <algorithm>
+#include "Constants.h"
 #include "Color.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
+#include "Hittable.h"
+#include "HittableList.h"
+#include "Sphere.h" 
 
 
 int main() {
+    //world info
+    HittableList world;
+    world.add(std::make_shared<Sphere>(Vector3D{0, 0, -1}, .5));
+    world.add(std::make_shared<Sphere>(Vector3D{0, -100.5, -1}, 100));
+
     //image info
     constexpr float_type aspect_ratio = 16.0/9.0;
     constexpr int image_width = 400;
@@ -39,7 +48,7 @@ int main() {
             Vector3D pixel_center = pixel0_loc + i*pixel_delta_u + j*pixel_delta_v;
             Ray3D pixel_ray {camera_center, pixel_center - camera_center};
             Sphere sphere {{0, 0, -1}, .5};
-            Color pixel_color = color_pixel(pixel_ray, sphere);
+            Color pixel_color = color_pixel(pixel_ray, world);
             pixel_color.write_pixel(std::cout);
         }
     }
