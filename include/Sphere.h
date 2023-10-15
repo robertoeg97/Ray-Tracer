@@ -20,8 +20,7 @@ public:
      * In the case of two solutions, the lower value of t is returned.
      * 
      * @param ray The ray to check.
-     * @param ray_tmin The minimum ray constant that results in an accepted solution.
-     * @param ray_tmax The maximum ray constant that results in an accepted solution.
+     * @param t_interval The minimum and maximum ray constants that results in an accepted solution.
      * @return HitResult that idicates whether ray intersects the sphere surface within ray_tmin and ray_tmax.
      * If successful hit, returns a valid HitRecord.
      */
