@@ -3,7 +3,6 @@
 
 #include "Vector3D.h"
 #include "Color.h"
-#include "Hittable.h"
 
 class Ray3D {
 private:
