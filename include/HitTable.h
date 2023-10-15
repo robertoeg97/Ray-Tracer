@@ -5,13 +5,13 @@
 #include "Ray3D.h"
 
 struct HitRecord {
-    Vector3D point;
-    Vector3D unit_normal;
-    float_type t;
-    bool front_face;
+    Vector3D point {};
+    Vector3D unit_normal {};
+    float_type t {};
+    bool front_face {};
 
     HitRecord() = default;
-    
+
     /**
      * @brief Sets the unit_normal of the object to always point towards the intersecting ray. 
      * Sets front_face to true if the ray intersected the object from the outside, and false from the inside.
