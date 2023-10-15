@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "Hittable.h"
 #include "Ray3D.h"
+#include "Interval.h"
 
 class HittableList : public Hittable {
 public:
@@ -19,12 +20,12 @@ public:
         hittables.push_back(object);
     }
 
-    HitResult hit(const Ray3D& ray, float_type ray_tmin, float_type ray_tmax) const override {
+    HitResult hit(const Ray3D& ray, Interval t_interval) const override {
         HitRecord hit_record {};
         bool hit_something = false;
-        float_type t_closest = ray_tmax;
+        float_type t_closest = t_interval.max;
         for (const auto& hittable_ptr : hittables) {
-            auto [is_closer_hit, cur_record] = hittable_ptr->hit(ray, ray_tmin, t_closest);
+            auto [is_closer_hit, cur_record] = hittable_ptr->hit(ray, Interval{t_interval.min, t_closest});
             if (is_closer_hit) {
                 hit_something = true;
                 t_closest = cur_record.t;

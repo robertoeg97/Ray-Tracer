@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
+#include "Interval.h"
 
 struct HitRecord {
     Vector3D point {};
@@ -35,7 +36,7 @@ class Hittable {
 public:
     virtual ~Hittable() = default;
 
-    virtual HitResult hit(const Ray3D& ray, float_type ray_tmin, float_type ray_tmax) const = 0;
+    virtual HitResult hit(const Ray3D& ray, Interval t_interval) const = 0;
 };
 
 #endif

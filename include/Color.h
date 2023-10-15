@@ -6,6 +6,7 @@
 #include "Triple.h"
 #include "Ray3D.h"
 #include "Sphere.h"
+#include "Interval.h"
 
 /**
  * @brief color is represented by a 3D vector of floating-point types from 0.0 to 1.0
@@ -25,7 +26,7 @@ public:
 };
 
 inline Color color_pixel(const Ray3D& pixel_ray, const Hittable& hittable) {
-        auto [is_hit, hit_record] = hittable.hit(pixel_ray, 0, infinity);
+        auto [is_hit, hit_record] = hittable.hit(pixel_ray, Interval(0, infinity));
         if (is_hit) {
             return .5 * (Color(hit_record.unit_normal.x()+1, hit_record.unit_normal.y()+1, hit_record.unit_normal.z()+1));   
         }

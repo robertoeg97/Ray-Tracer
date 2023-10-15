@@ -5,6 +5,7 @@
 #include "Hittable.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
+#include "Interval.h"
 
 class Sphere : public Hittable {
 private:
@@ -24,7 +25,7 @@ public:
      * @return HitResult that idicates whether ray intersects the sphere surface within ray_tmin and ray_tmax.
      * If successful hit, returns a valid HitRecord.
      */
-    HitResult hit(const Ray3D& ray, float_type ray_tmin, float_type ray_tmax) const override {
+    HitResult hit(const Ray3D& ray, Interval t_interval) const override {
         //quadratic formula to find where the ray hits the sphere surface
         Vector3D center_to_origin = ray.origin() - m_center;
         //use formula: -b+-sqrt(b*b-4ac)/(2a) = -half_b+-sqrt(half_b*half_b-ac)/(a)
@@ -40,9 +41,9 @@ public:
         //determine which ray intersection point falls within the desired bounds of t
         //prioritizes the lower value of t if both ray intersection points fall within tmin and tmax
         float_type root = (-half_b - sqrtd) / (a);  //subtracting discriminant gives lower root
-        if (root < ray_tmin || root > ray_tmax) {
+        if (!t_interval.contains(root)) {
             root = (-half_b + sqrtd) / (a);     //adding discriminant gives higher root
-            if (root < ray_tmin || root > ray_tmax) {
+            if (!t_interval.contains(root)) {
                 return {false, HitRecord{}};
             }
         }
