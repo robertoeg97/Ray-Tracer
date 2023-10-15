@@ -20,8 +20,8 @@ public:
      * @param ray The ray to check.
      * @param ray_tmin The minimum ray constant that results in an accepted solution.
      * @param ray_tmax The maximum ray constant that results in an accepted solution.
-     * @return true if the ray intesects a surface of the sphere within tay_tmin and ray_tmax.
-     * @return false otherwise
+     * @return HitResult that idicates whether ray intersects the sphere surface within ray_tmin and ray_tmax.
+     * If successful hit, returns a valid HitRecord.
      */
     HitResult hit(const Ray3D& ray, float_type ray_tmin, float_type ray_tmax) const override {
         //quadratic formula to find where the ray hits the sphere surface
