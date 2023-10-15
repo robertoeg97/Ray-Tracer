@@ -2,6 +2,7 @@
 #define COLOR_H
 
 #include <iostream>
+#include "Constants.h"
 #include "Triple.h"
 #include "Ray3D.h"
 #include "Sphere.h"
@@ -23,8 +24,8 @@ public:
     }
 };
 
-inline Color color_pixel(const Ray3D& pixel_ray, const Sphere& sphere) {
-        auto [is_hit, hit_record] = sphere.hit(pixel_ray, 0, INT_MAX);
+inline Color color_pixel(const Ray3D& pixel_ray, const Hittable& hittable) {
+        auto [is_hit, hit_record] = hittable.hit(pixel_ray, 0, infinity);
         if (is_hit) {
             return .5 * (Color(hit_record.unit_normal.x()+1, hit_record.unit_normal.y()+1, hit_record.unit_normal.z()+1));   
         }
