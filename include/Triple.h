@@ -8,7 +8,7 @@
 
 template <typename Derived> 
 class Triple {
-private:
+protected:
     std::array<float_type, 3> m_vec {};
 
 public:

@@ -21,4 +21,21 @@ public:
     }
 };
 
+class ColorSum : public Triple<Color> {
+public:
+
+    using Triple<Color>::Triple;    //inherit base class constructors
+    
+    Color scale_sum(int number_of_samples) const {
+        float_type scale = 1.0/number_of_samples;
+        return scale * Color{x(), y(), z()};
+    }
+
+    ColorSum operator+=(Color color) {
+        m_vec[0] += color.x();
+        m_vec[1] += color.y();
+        m_vec[2] += color.z();
+    }
+};
+
 #endif
