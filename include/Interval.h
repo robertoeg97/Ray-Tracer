@@ -15,6 +15,12 @@ public:
     bool contains(float_type x) const {
         return x >= min && x <= max;
     }
+
+    float_type clamp(float_type x) const {
+        if (x < min) return min;
+        if (x > max) return max;
+        return x;
+    }
 };
 
 const Interval Interval::empty {+infinity, -infinity};
