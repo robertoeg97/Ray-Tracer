@@ -30,10 +30,10 @@ private:
     
 public:
     constexpr Camera(float_type aspect_ratio_, int image_width_, int samples_per_pixel_, int max_depth_) : 
+        max_depth{max_depth_},
         samples_per_pixel{samples_per_pixel_},
         aspect_ratio{aspect_ratio_}, 
-        image_width{image_width_},
-        max_depth{max_depth_}
+        image_width{image_width_}
     {
         image_height = std::max(static_cast<int>(image_width/aspect_ratio), 1);        
         //viewport dimensions
@@ -86,7 +86,8 @@ private:
             return Color{0, 0, 0};
         }
 
-        auto [is_hit, hit_record] = world.hit(pixel_ray, Interval(0, infinity));
+        constexpr float_type min_travel_distance = 0.001;  //avoid shadow acne
+        auto [is_hit, hit_record] = world.hit(pixel_ray, Interval(min_travel_distance, infinity));
         if (is_hit) { 
             Vector3D random_reflection = Vector3D::random_unit_on_hemisphere(hit_record.unit_normal); 
             return .5 * ray_color(Ray3D(hit_record.point, random_reflection), world, depth+1);
