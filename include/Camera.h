@@ -78,8 +78,9 @@ private:
 
     Color ray_color(const Ray3D& pixel_ray, const Hittable& world) {
         auto [is_hit, hit_record] = world.hit(pixel_ray, Interval(0, infinity));
-        if (is_hit) {
-            return .5 * (Color(hit_record.unit_normal.x()+1, hit_record.unit_normal.y()+1, hit_record.unit_normal.z()+1));   
+        if (is_hit) { 
+            Vector3D random_reflection = Vector3D::random_unit_on_hemisphere(hit_record.unit_normal); 
+            return .5 * ray_color(Ray3D(hit_record.point, random_reflection), world);
         }
 
         Vector3D unit_direction = pixel_ray.direction().unit_vector();
