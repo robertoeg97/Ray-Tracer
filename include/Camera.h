@@ -12,6 +12,8 @@
 
 class Camera {
 private:
+    //recursion limit
+    constexpr static int max_depth = 10;
     //sampling info
     int samples_per_pixel {};          //antialiasing
     //camera info
@@ -76,11 +78,16 @@ private:
         return Ray3D{camera_center, random_point_in_pixel};
     }
 
-    Color ray_color(const Ray3D& pixel_ray, const Hittable& world) {
+    Color ray_color(const Ray3D& pixel_ray, const Hittable& world, int depth = 0) {
+        //if we've exceeded the ray reflection limit, no more light is gathered
+        if (depth >= max_depth) {
+            return Color{0, 0, 0};
+        }
+        
         auto [is_hit, hit_record] = world.hit(pixel_ray, Interval(0, infinity));
         if (is_hit) { 
             Vector3D random_reflection = Vector3D::random_unit_on_hemisphere(hit_record.unit_normal); 
-            return .5 * ray_color(Ray3D(hit_record.point, random_reflection), world);
+            return .5 * ray_color(Ray3D(hit_record.point, random_reflection), world, depth+1);
         }
 
         Vector3D unit_direction = pixel_ray.direction().unit_vector();
