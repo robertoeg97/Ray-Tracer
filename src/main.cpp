@@ -16,7 +16,8 @@ int main() {
     constexpr float_type aspect_ratio = 16.0/9.0;
     constexpr int image_width = 400;
     constexpr int samples_per_pixel = 100;
-    Camera camera (aspect_ratio, image_width, samples_per_pixel);
+    constexpr int max_depth = 10;
+    Camera camera (aspect_ratio, image_width, samples_per_pixel, max_depth);
 
     camera.render(world);
 

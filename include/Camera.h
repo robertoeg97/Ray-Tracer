@@ -13,25 +13,27 @@
 class Camera {
 private:
     //recursion limit
-    constexpr static int max_depth = 10;
+    int max_depth = 10;
     //sampling info
-    int samples_per_pixel {};          //antialiasing
+    int samples_per_pixel = 10;     //provides antialiasing
     //camera info
     constexpr static float_type focal_length = 1.0;
     constexpr static Vector3D camera_center {0, 0, 0};
     //image info
-    float_type aspect_ratio {};        //image width to height ratio
-    int image_width, image_height {};  //in pixels
+    float_type aspect_ratio = 16.0/9.0;     //image width to height ratio
+    int image_width = 640;                  //in pixels
+    int image_height {};                    //in pixels
     //viewport info
     Vector3D pixel_delta_u {};         //length of single pixel along width, pointing right
     Vector3D pixel_delta_v {};         //length of single pixel along height, pointing down
     Vector3D pixel00_loc {};           //upper left pixel location
     
 public:
-    constexpr Camera(float_type aspect_ratio_, int image_width_, int samples_per_pixel_) : 
+    constexpr Camera(float_type aspect_ratio_, int image_width_, int samples_per_pixel_, int max_depth_) : 
         samples_per_pixel{samples_per_pixel_},
         aspect_ratio{aspect_ratio_}, 
-        image_width{image_width_}
+        image_width{image_width_},
+        max_depth{max_depth_}
     {
         image_height = std::max(static_cast<int>(image_width/aspect_ratio), 1);        
         //viewport dimensions
@@ -83,7 +85,7 @@ private:
         if (depth >= max_depth) {
             return Color{0, 0, 0};
         }
-        
+
         auto [is_hit, hit_record] = world.hit(pixel_ray, Interval(0, infinity));
         if (is_hit) { 
             Vector3D random_reflection = Vector3D::random_unit_on_hemisphere(hit_record.unit_normal); 
