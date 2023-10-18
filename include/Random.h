@@ -7,7 +7,7 @@
 
 // This header-only Random namespace implements a self-seeding Mersenne Twister
 // It can be included into as many code files as needed (The inline keyword avoids ODR violations)
-namespace Random
+namespace random
 {
 	inline std::mt19937 init()
 	{
