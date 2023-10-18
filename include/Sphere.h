@@ -40,9 +40,9 @@ public:
         //determine which ray intersection point falls within the desired bounds of t
         //prioritizes the lower value of t if both ray intersection points fall within tmin and tmax
         float_type root = (-half_b - sqrtd) / (a);  //subtracting discriminant gives lower root
-        if (!t_interval.contains(root)) {
+        if (!t_interval.surrounds(root)) {
             root = (-half_b + sqrtd) / (a);     //adding discriminant gives higher root
-            if (!t_interval.contains(root)) {
+            if (!t_interval.surrounds(root)) {
                 return {false, HitRecord{}};
             }
         }

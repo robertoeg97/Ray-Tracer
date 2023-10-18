@@ -16,6 +16,10 @@ public:
         return x >= min && x <= max;
     }
 
+    bool surrounds(float_type x) const {
+        return x > min && x < max; 
+    }
+
     float_type clamp(float_type x) const {
         if (x < min) return min;
         if (x > max) return max;
