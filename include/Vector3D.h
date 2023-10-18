@@ -27,9 +27,9 @@ private:
     }
 
 public:
-    static Vector3D random_on_hemisphere(const Vector3D& normal) {
+    static Vector3D random_unit_on_hemisphere(const Vector3D& normal) {
         Vector3D vec_on_unit_sphere = random_unit_vector();
-        if (vec_on_unit_sphere.dot(normal)) {
+        if (vec_on_unit_sphere.dot(normal) > 0) {   //same hemisphere as normal
             return vec_on_unit_sphere;
         }
         else {
