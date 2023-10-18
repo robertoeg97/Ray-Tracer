@@ -5,7 +5,6 @@
 #include <iostream>
 #include <array>
 #include "Constants.h"
-#include "Random.h"
 
 template <typename Derived> 
 class Triple {
@@ -74,9 +73,6 @@ public:
         return *this / length();
     }
 
-    constexpr static Vector3D random(float_type min, float_type max) { 
-        return Vector3D{random::random(min, max), random::random(min, max), random::random(min, max)};
-    }
 };
 
 template <typename T>
