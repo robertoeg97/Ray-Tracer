@@ -20,20 +20,18 @@ public:
         hittables.push_back(object);
     }
 
-    HitResult hit(const Ray3D& ray, const Interval& t_interval) const override {
+    HitRecord hit(const Ray3D& ray, const Interval& t_interval) const override {
         HitRecord hit_record {};
-        bool hit_something = false;
         float_type t_closest = t_interval.max;
         for (const auto& hittable_ptr : hittables) {
-            auto [is_closer_hit, cur_record] = hittable_ptr->hit(ray, Interval{t_interval.min, t_closest});
-            if (is_closer_hit) {
-                hit_something = true;
+            HitRecord cur_record = hittable_ptr->hit(ray, Interval{t_interval.min, t_closest});
+            if (cur_record.is_hit) {
                 t_closest = cur_record.t;
                 hit_record = cur_record;
             }
         }
 
-        return {hit_something, hit_record};
+        return hit_record;
     }
 };
 

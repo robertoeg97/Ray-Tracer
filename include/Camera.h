@@ -87,8 +87,8 @@ private:
         }
 
         constexpr float_type min_travel_distance = 0.001;  //avoid shadow acne
-        auto [is_hit, hit_record] = world.hit(pixel_ray, Interval(min_travel_distance, infinity));
-        if (is_hit) { 
+        HitRecord hit_record = world.hit(pixel_ray, Interval(min_travel_distance, infinity));
+        if (hit_record.is_hit) { 
             Vector3D random_reflection =    Vector3D::random_unit_on_hemisphere(hit_record.unit_normal) +   //matte random scattering
                                             hit_record.unit_normal;                                         //lambertian reflection
             return .5 * ray_color(Ray3D(hit_record.point, random_reflection), world, depth+1);

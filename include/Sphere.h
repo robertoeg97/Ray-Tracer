@@ -24,7 +24,7 @@ public:
      * @return HitResult that idicates whether ray intersects the sphere surface within ray_tmin and ray_tmax.
      * If successful hit, returns a valid HitRecord.
      */
-    HitResult hit(const Ray3D& ray, const Interval& t_interval) const override {
+    HitRecord hit(const Ray3D& ray, const Interval& t_interval) const override {
         //quadratic formula to find where the ray hits the sphere surface
         Vector3D center_to_origin = ray.origin() - m_center;
         //use formula: -b+-sqrt(b*b-4ac)/(2a) = -half_b+-sqrt(half_b*half_b-ac)/(a)
@@ -33,7 +33,7 @@ public:
         float_type c = center_to_origin.dot(center_to_origin) - m_radius*m_radius;
         float_type discriminant = half_b*half_b - a*c;
         if (discriminant < 0) {
-            return {false, HitRecord{}};
+            return HitRecord{};
         } 
         float_type sqrtd = std::sqrt(discriminant);
         
@@ -43,18 +43,19 @@ public:
         if (!t_interval.surrounds(root)) {
             root = (-half_b + sqrtd) / (a);     //adding discriminant gives higher root
             if (!t_interval.surrounds(root)) {
-                return {false, HitRecord{}};
+                return HitRecord{};
             }
         }
 
         //pass hit information through hit record
         HitRecord rec;
+        rec.is_hit = true;
         rec.t = root;
         rec.point = ray.at(rec.t);
         Vector3D outward_unit_normal = (rec.point - m_center) / m_radius;
         rec.set_face_and_normal(ray, outward_unit_normal);
 
-        return {true, rec};
+        return rec;
     }
 };
 

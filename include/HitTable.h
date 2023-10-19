@@ -7,6 +7,7 @@
 #include "Interval.h"
 
 struct HitRecord {
+    bool is_hit = false;
     Vector3D point {};
     Vector3D unit_normal {};
     float_type t {};
@@ -27,16 +28,12 @@ struct HitRecord {
     }
 };
 
-struct HitResult {
-    bool is_hit {};
-    HitRecord hit_record {};
-};
 
 class Hittable {
 public:
     virtual ~Hittable() = default;
 
-    virtual HitResult hit(const Ray3D& ray, const Interval& t_interval) const = 0;
+    virtual HitRecord hit(const Ray3D& ray, const Interval& t_interval) const = 0;
 };
 
 #endif
