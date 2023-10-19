@@ -1,6 +1,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include <memory>
 #include "Constants.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
@@ -12,6 +13,7 @@ struct HitRecord {
     Vector3D unit_normal {};
     float_type t {};
     bool front_face {};
+    std::shared_ptr<Material> material_ptr {};
 
     HitRecord() = default;
 

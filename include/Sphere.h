@@ -1,19 +1,23 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include <memory>
 #include "Constants.h"
 #include "Hittable.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
 #include "Interval.h"
+#include "Material.h"
 
 class Sphere : public Hittable {
 private:
     Vector3D m_center;
     float_type m_radius; 
+    std::shared_ptr<Material> m_material_ptr;
 
 public:
-    Sphere (const Vector3D& center, float_type radius) : m_center{center}, m_radius{radius} {}
+    Sphere (const Vector3D& center, float_type radius, std::shared_ptr<Material> material_ptr) : 
+        m_center{center}, m_radius{radius}, m_material_ptr{material_ptr} {}
 
     /**
      * @brief Determines whether the ray intersects the surface of the sphere. 
@@ -54,6 +58,7 @@ public:
         rec.point = ray.at(rec.t);
         Vector3D outward_unit_normal = (rec.point - m_center) / m_radius;
         rec.set_face_and_normal(ray, outward_unit_normal);
+        rec.material_ptr = m_material_ptr;
 
         return rec;
     }
