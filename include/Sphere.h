@@ -24,7 +24,7 @@ public:
      * @return HitResult that idicates whether ray intersects the sphere surface within ray_tmin and ray_tmax.
      * If successful hit, returns a valid HitRecord.
      */
-    HitResult hit(const Ray3D& ray, Interval t_interval) const override {
+    HitResult hit(const Ray3D& ray, const Interval& t_interval) const override {
         //quadratic formula to find where the ray hits the sphere surface
         Vector3D center_to_origin = ray.origin() - m_center;
         //use formula: -b+-sqrt(b*b-4ac)/(2a) = -half_b+-sqrt(half_b*half_b-ac)/(a)

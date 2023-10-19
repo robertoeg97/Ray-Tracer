@@ -36,7 +36,7 @@ class Hittable {
 public:
     virtual ~Hittable() = default;
 
-    virtual HitResult hit(const Ray3D& ray, Interval t_interval) const = 0;
+    virtual HitResult hit(const Ray3D& ray, const Interval& t_interval) const = 0;
 };
 
 #endif

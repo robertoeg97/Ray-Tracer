@@ -20,7 +20,7 @@ public:
         hittables.push_back(object);
     }
 
-    HitResult hit(const Ray3D& ray, Interval t_interval) const override {
+    HitResult hit(const Ray3D& ray, const Interval& t_interval) const override {
         HitRecord hit_record {};
         bool hit_something = false;
         float_type t_closest = t_interval.max;
