@@ -38,5 +38,20 @@ public:
     }
 };
 
+class Metal : public Material {
+private:
+    Color albedo;
+
+public:
+    Metal(const Color& albedo_) : albedo{albedo_} {}
+
+    ScatterRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const override {
+        constexpr bool success = true;
+        Vector3D reflected_direction = ray_in.direction().reflect(hit_record.unit_normal);
+        Ray3D reflected_ray {hit_record.point, reflected_direction};
+        return ScatterRecord{success, reflected_ray, albedo};
+    }
+};
+
 
 #endif
