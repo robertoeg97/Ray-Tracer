@@ -8,6 +8,7 @@
 #include "Hittable.h"
 #include "Color.h"
 #include "Sphere.h"
+#include "Material.h"
 #include "Random.h"
 
 class Camera {
@@ -92,7 +93,7 @@ private:
             ScatterRecord scatter_record = hit_record.material_ptr->scatter(pixel_ray, hit_record);  
             if (scatter_record.success) {
                 return scatter_record.attenuation * ray_color(scatter_record.ray_out, world, depth+1);
-            }                                   
+            }                                
             return Color(0, 0, 0); //failed scatter
         }
 
