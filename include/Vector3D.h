@@ -1,6 +1,7 @@
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 
+#include "Constants.h"
 #include "Triple.h"
 #include "Random.h"
 
@@ -35,6 +36,12 @@ public:
         else {
             return -vec_on_unit_sphere;
         }
+    }
+
+    bool near_zero() const {
+        //returns true if the vector is close to zero in all dimensions
+        constexpr float_type epsilon = 1e-8;
+        return (abs(x()) < epsilon) && (abs(y()) < epsilon) && (abs(z()) < epsilon);
     }
 };
 
