@@ -10,7 +10,9 @@ class Material {
 public:
     virtual ~Material() {}
 
-    virtual HitRecord scatter(const Ray3D& ray_in) = 0;
+    virtual HitRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const = 0;
 };
+
+
 
 #endif
