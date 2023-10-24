@@ -89,8 +89,11 @@ private:
         constexpr float_type min_travel_distance = 0.001;  //avoid shadow acne
         HitRecord hit_record = world.hit(pixel_ray, Interval(min_travel_distance, infinity));
         if (hit_record.is_hit) { 
-            Vector3D lambertian_reflect_direction = Vector3D::random_sphere_unit_vector() + hit_record.unit_normal;                                         
-            return .5 * ray_color(Ray3D(hit_record.point, lambertian_reflect_direction), world, depth+1);
+            ScatterRecord scatter_record = hit_record.material_ptr->scatter(pixel_ray, hit_record);  
+            if (scatter_record.success) {
+                return scatter_record.attenuation * ray_color(scatter_record.ray_out, world, depth+1);
+            }                                   
+            return Color(0, 0, 0); //failed scatter
         }
 
         Vector3D unit_direction = pixel_ray.direction().unit_vector();
