@@ -1,6 +1,7 @@
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 
+#include <cmath>
 #include "Constants.h"
 #include "Triple.h"
 #include "Random.h"
