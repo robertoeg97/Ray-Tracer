@@ -22,13 +22,13 @@ private:
         }
     }
 
-    static Vector3D random_unit_vector() {
+public:
+    static Vector3D random_sphere_unit_vector() {
         return random_in_unit_sphere().unit_vector();
     }
 
-public:
     static Vector3D random_unit_on_hemisphere(const Vector3D& normal) {
-        Vector3D vec_on_unit_sphere = random_unit_vector();
+        Vector3D vec_on_unit_sphere = random_sphere_unit_vector();
         if (vec_on_unit_sphere.dot(normal) > 0) {   //same hemisphere as normal
             return vec_on_unit_sphere;
         }
