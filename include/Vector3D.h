@@ -38,6 +38,11 @@ public:
         }
     }
 
+    Vector3D reflect(const Vector3D& unit_normal) const {
+        Vector3D projection_onto_normal = unit_normal * this->dot(unit_normal);
+        return *this - 2*projection_onto_normal;
+    }
+
     bool near_zero() const {
         //returns true if the vector is close to zero in all dimensions
         constexpr float_type epsilon = 1e-8;
