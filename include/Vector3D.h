@@ -47,7 +47,7 @@ public:
     bool near_zero() const {
         //returns true if the vector is close to zero in all dimensions
         constexpr float_type epsilon = 1e-8;
-        return (abs(x()) < epsilon) && (abs(y()) < epsilon) && (abs(z()) < epsilon);
+        return (fabs(x()) < epsilon) && (fabs(y()) < epsilon) && (fabs(z()) < epsilon);
     }
 };
 
