@@ -38,6 +38,13 @@ public:
         return *this = *this - other;
     }
 
+    constexpr Derived operator*(const Derived& other) const {
+        return {m_vec[0]*other.m_vec[0], m_vec[1]*other.m_vec[1], m_vec[2]*other.m_vec[2]};
+    }
+    constexpr Derived operator*=(const Derived& other) {
+        return *this = *this * other;
+    }
+
     constexpr Derived operator*(float_type t) const {
         return {t*m_vec[0], t*m_vec[1], t*m_vec[2]};
     }
