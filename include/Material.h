@@ -4,6 +4,8 @@
 #include "Ray3D.h"
 #include "Hittable.h"
 
+struct HitRecord;
+
 class Material {
 public:
     virtual ~Material() {}

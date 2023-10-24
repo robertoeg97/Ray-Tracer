@@ -6,6 +6,7 @@
 #include "Vector3D.h"
 #include "Ray3D.h"
 #include "Interval.h"
+#include "Material.h"
 
 struct HitRecord {
     bool is_hit = false;
