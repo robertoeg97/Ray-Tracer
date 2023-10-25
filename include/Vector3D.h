@@ -44,12 +44,11 @@ public:
         return *this - 2*projection_onto_normal;
     }
 
-    Vector3D refract(const Vector3D& unit_normal, float_type eta_from, float_type eta_to) const {
+    Vector3D refract(const Vector3D& unit_normal, float_type eta_from_eta_to_ratio) const {
         //snell's law 
-        Vector3D unit_vec = this->unit_vector();
-        float_type cos_theta = -unit_vec.dot(unit_normal);
-        Vector3D out_direction_perp = eta_from /eta_to * (*this + unit_normal * cos_theta);
-        Vector3D out_direction_parallel = -std::sqrt(1-out_direction_perp.length_squared()) * unit_normal;
+        float_type cos_theta = fmin(-(*this).dot(unit_normal), 1.0);
+        Vector3D out_direction_perp = eta_from_eta_to_ratio * (*this + unit_normal * cos_theta);
+        Vector3D out_direction_parallel = -std::sqrt(fabs(1-out_direction_perp.length_squared())) * unit_normal;
         return out_direction_perp + out_direction_parallel;
     }
 

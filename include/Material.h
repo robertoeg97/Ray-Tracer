@@ -56,4 +56,23 @@ public:
 };
 
 
+class Dielectric : public Material {
+private:
+    float_type refractive_index;
+
+public:
+    Dielectric(float_type refractive_index_) : refractive_index {refractive_index_} {}
+
+    ScatterRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const override {
+        constexpr bool success = true;
+        constexpr Color attenuation {1, 1, 1};
+        constexpr float_type air_ri = 1.0;
+        float_type refraction_ratio = (hit_record.front_face) ? air_ri / refractive_index : refractive_index / air_ri;
+        Vector3D refracted_direction = ray_in.direction().unit_vector().refract(hit_record.unit_normal, refraction_ratio);
+        Ray3D refracted_ray {hit_record.point, refracted_direction};
+        return ScatterRecord{success, refracted_ray, attenuation};
+    }
+};
+
+
 #endif

@@ -13,8 +13,8 @@ int main() {
     HittableList world;
 
     auto material_ground = std::make_shared<Lambertian>(Color{.8, .8, 0});
-    auto material_center = std::make_shared<Lambertian>(Color{.7, .3, .3});
-    auto material_left = std::make_shared<Metal>(Color{.8, .8, .8}, .3);
+    auto material_center = std::make_shared<Dielectric>(1.5);
+    auto material_left = std::make_shared<Dielectric>(1.5);
     auto material_right = std::make_shared<Metal>(Color{.8, .6, .2}, 1);
 
     world.add(std::make_shared<Sphere>(Vector3D{0, -100.5, -1}, 100, material_ground));
