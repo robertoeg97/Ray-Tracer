@@ -44,6 +44,15 @@ public:
         return *this - 2*projection_onto_normal;
     }
 
+    Vector3D refract(const Vector3D& unit_normal, float_type eta_from, float_type eta_to) const {
+        //snell's law 
+        Vector3D unit_vec = this->unit_vector();
+        float_type cos_theta = -unit_vec.dot(unit_normal);
+        Vector3D out_direction_perp = eta_from /eta_to * (*this + unit_normal * cos_theta);
+        Vector3D out_direction_parallel = -std::sqrt(1-out_direction_perp.length_squared()) * unit_normal;
+        return out_direction_perp + out_direction_parallel;
+    }
+
     bool near_zero() const {
         //returns true if the vector is close to zero in all dimensions
         constexpr float_type epsilon = 1e-8;
