@@ -47,9 +47,17 @@ public:
     Vector3D refract(const Vector3D& unit_normal, float_type eta_from_eta_to_ratio) const {
         //snell's law 
         float_type cos_theta = fmin(-(*this).dot(unit_normal), 1.0);
-        Vector3D out_direction_perp = eta_from_eta_to_ratio * (*this + unit_normal * cos_theta);
-        Vector3D out_direction_parallel = -std::sqrt(fabs(1-out_direction_perp.length_squared())) * unit_normal;
-        return out_direction_perp + out_direction_parallel;
+        float_type sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
+        if (eta_from_eta_to_ratio * sin_theta > 1.0) {
+            //total internal reflection
+            return reflect(unit_normal);
+        }
+        else {
+            //refraction
+            Vector3D out_direction_perp = eta_from_eta_to_ratio * (*this + unit_normal * cos_theta);
+            Vector3D out_direction_parallel = -std::sqrt(fabs(1-out_direction_perp.length_squared())) * unit_normal;
+            return out_direction_perp + out_direction_parallel;
+        }
     }
 
     bool near_zero() const {
