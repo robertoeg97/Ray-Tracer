@@ -44,12 +44,13 @@ public:
         return *this - 2*projection_onto_normal;
     }
 
-    Vector3D refract(const Vector3D& unit_normal, float_type eta_from_eta_to_ratio) const {
+    Vector3D refract(const Vector3D& unit_normal, float_type eta_from_eta_to_ratio, float_type reflectance) const {
         //snell's law 
         float_type cos_theta = fmin(-(*this).dot(unit_normal), 1.0);
         float_type sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
-        if (eta_from_eta_to_ratio * sin_theta > 1.0) {
-            //total internal reflection
+        bool total_internal_reflection = eta_from_eta_to_ratio * sin_theta > 1.0;
+        if (total_internal_reflection || reflectance > random::random_float(0, 1)) {
+            //reflection
             return reflect(unit_normal);
         }
         else {

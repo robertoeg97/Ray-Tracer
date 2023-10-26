@@ -60,6 +60,13 @@ class Dielectric : public Material {
 private:
     float_type refractive_index;
 
+    static float_type reflectance(float_type cosine, float_type ref_idx) {
+        //use Sclick's reflectance approximation
+        float_type r0 = (1-ref_idx) / (1+ref_idx);
+        r0 = r0*r0;
+        return r0 + (1-r0)*pow(1-cosine, 5);
+    }
+    
 public:
     Dielectric(float_type refractive_index_) : refractive_index {refractive_index_} {}
 
@@ -68,9 +75,11 @@ public:
         constexpr Color attenuation {1, 1, 1};
         constexpr float_type air_ri = 1.0;
         float_type refraction_ratio = (hit_record.front_face) ? air_ri / refractive_index : refractive_index / air_ri;
-        Vector3D refracted_direction = ray_in.direction().unit_vector().refract(hit_record.unit_normal, refraction_ratio);
+        Vector3D unit_direction = ray_in.direction().unit_vector();
+        float_type cos_theta = fmin(-unit_direction.dot(hit_record.unit_normal), 1.0);
+        Vector3D refracted_direction = unit_direction.refract(hit_record.unit_normal, refraction_ratio, reflectance(cos_theta, refraction_ratio));
         Ray3D refracted_ray {hit_record.point, refracted_direction};
-        return ScatterRecord{success, refracted_ray, attenuation};
+        return ScatterRecord{success, refracted_ray, attenuation};  
     }
 };
 
