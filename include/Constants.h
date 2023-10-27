@@ -13,7 +13,7 @@ inline constexpr float_type pi = 3.1415926535897932385;
 inline constexpr float_type infinity = std::numeric_limits<float_type>::infinity();
 
 //utility
-inline float_type degrees_to_radians(float_type degrees) {
+inline constexpr float_type degrees_to_radians(float_type degrees) {
     return degrees * pi / 180;
 }
 

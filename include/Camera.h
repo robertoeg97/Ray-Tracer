@@ -24,21 +24,25 @@ private:
     float_type aspect_ratio = 16.0/9.0;     //image width to height ratio
     int image_width = 640;                  //in pixels
     int image_height {};                    //in pixels
+    float_type vfov = 90.0;                 //degrees
     //viewport info
     Vector3D pixel_delta_u {};         //length of single pixel along width, pointing right
     Vector3D pixel_delta_v {};         //length of single pixel along height, pointing down
     Vector3D pixel00_loc {};           //upper left pixel location
     
 public:
-    constexpr Camera(float_type aspect_ratio_, int image_width_, int samples_per_pixel_, int max_depth_) : 
+    Camera(float_type aspect_ratio_, int image_width_, float_type vfov_, int samples_per_pixel_, int max_depth_) : 
         max_depth{max_depth_},
         samples_per_pixel{samples_per_pixel_},
         aspect_ratio{aspect_ratio_}, 
-        image_width{image_width_}
+        image_width{image_width_},
+        vfov{vfov_}
     {
         image_height = std::max(static_cast<int>(image_width/aspect_ratio), 1);        
         //viewport dimensions
-        constexpr float_type viewport_height = 2.0;
+        float_type theta = degrees_to_radians(vfov);
+        float_type h = std::tan(theta/2.0);
+        float_type viewport_height = 2.0 * h * focal_length;
         float_type viewport_width = viewport_height * (static_cast<float_type>(image_width)/image_height);
         //initialize vectors going right along the horizontal and down along the vertical viewport edges
         Vector3D viewport_u {viewport_width, 0, 0};
@@ -51,7 +55,7 @@ public:
         pixel00_loc = viewport_upper_left + .5*(pixel_delta_u + pixel_delta_v);
     }
 
-    void render(const Hittable& world) {
+    void render(const Hittable& world) const {
         std::cout << "P3\n" << image_width << ' ' << image_height << '\n' << Color::max_pixel_val << '\n';
         for (int j = 0; j < image_height; ++j) {
             std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
@@ -69,19 +73,19 @@ public:
     }
 
 private:
-    Vector3D get_random_point_in_pixel(const Vector3D& pixel_center) {
+    Vector3D get_random_point_in_pixel(const Vector3D& pixel_center) const {
         Vector3D du = random::random_float(-.5, .5) * pixel_delta_u;
         Vector3D dv = random::random_float(-.5, .5) * pixel_delta_v;
         return pixel_center + du + dv;
     }
 
-    Ray3D get_ray_sample(int i, int j) {
+    Ray3D get_ray_sample(int i, int j) const {
         Vector3D pixel_center = pixel00_loc + i*pixel_delta_u + j*pixel_delta_v;
         Vector3D random_point_in_pixel = get_random_point_in_pixel(pixel_center);
         return Ray3D{camera_center, random_point_in_pixel};
     }
 
-    Color ray_color(const Ray3D& pixel_ray, const Hittable& world, int depth = 0) {
+    Color ray_color(const Ray3D& pixel_ray, const Hittable& world, int depth = 0) const {
         //if we've exceeded the ray reflection limit, no more light is gathered
         if (depth >= max_depth) {
             return Color{0, 0, 0};
