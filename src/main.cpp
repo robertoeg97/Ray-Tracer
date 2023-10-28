@@ -30,11 +30,14 @@ int main() {
     constexpr Vector3D camera_target {0, 0, -1};
     constexpr Vector3D camera_lens_direction = camera_target - camera_center;
     constexpr Vector3D camera_up_direction {0, 1, 0};
+    constexpr float_type defocus_angle = 10;
+    constexpr float_type focus_distance = 3.4;
     constexpr float_type vfov = 20;
     constexpr int samples_per_pixel = 100;
     constexpr int max_depth = 50;
     const Camera camera (aspect_ratio, image_width, 
                         camera_center, camera_lens_direction, camera_up_direction, 
+                        defocus_angle, focus_distance,
                         vfov, samples_per_pixel, max_depth);
 
     //render

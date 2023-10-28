@@ -22,7 +22,8 @@ private:
     Vector3D camera_center {0, 0, 0};       
     Vector3D camera_lens_direction {0, 0, -1};
     Vector3D camera_up_direction {0, 1, 0};
-    float_type focal_length = 1.0;
+    float_type defocus_angle = 0;
+    float_type focus_distance = 10;
     float_type vfov = 90.0;                 //degrees
     //image info
     float_type aspect_ratio = 16.0/9.0;     //image width to height ratio
@@ -34,25 +35,30 @@ private:
     Vector3D pixel00_loc {};           //upper left pixel location
     //camera frame basis vectors
     Vector3D w{}, u{}, v{};
+    //defocus disk vectors
+    Vector3D defocus_disk_u {}; //defocus disk horizontal radius
+    Vector3D defocus_disk_v {}; //defocus disk vertical radius
     
 public:
     Camera( float_type aspect_ratio_, int image_width_, 
             Vector3D camera_center_, Vector3D camera_lens_direction_, Vector3D camera_up_direction_,
+            float_type defocus_angle_, float_type focus_distance_,
             float_type vfov_, int samples_per_pixel_, int max_depth_) : 
         max_depth{max_depth_},
         samples_per_pixel{samples_per_pixel_},
         camera_center{camera_center_},
         camera_lens_direction{camera_lens_direction_},
         camera_up_direction{camera_up_direction_},
+        defocus_angle{defocus_angle_},
+        focus_distance{focus_distance_},
         vfov{vfov_},
         aspect_ratio{aspect_ratio_},   
         image_width{image_width_}
     {
         image_height = std::max(static_cast<int>(image_width/aspect_ratio), 1);        
         //viewport dimensions
-        focal_length = camera_lens_direction.length();  //note: can be arbitrary; viewport dimensions are chosen appropriately
         float_type theta = degrees_to_radians(vfov);
-        float_type h = focal_length * std::tan(theta/2);
+        float_type h = focus_distance * std::tan(theta/2);
         float_type viewport_height = 2 * h;
         float_type viewport_width = viewport_height * (static_cast<float_type>(image_width)/image_height);
         //calculate the w,u,v basis vectors for the camera coordinate frame
@@ -66,8 +72,12 @@ public:
         pixel_delta_u = viewport_u / image_width;
         pixel_delta_v = viewport_v / image_height;
         //determine the location of the upper left pixel
-        Vector3D viewport_upper_left = camera_center - (focal_length*w) - viewport_u/2 - viewport_v/2;
+        Vector3D viewport_upper_left = camera_center - (focus_distance*w) - viewport_u/2 - viewport_v/2;
         pixel00_loc = viewport_upper_left + .5*(pixel_delta_u + pixel_delta_v);
+        //calculate the camera defocus distance basis vectors
+        float_type defocus_radius = focus_distance * std::tan(degrees_to_radians(defocus_angle/2));
+        defocus_disk_u = u * defocus_radius;
+        defocus_disk_v = v * defocus_radius;
     }
 
     void render(const Hittable& world) const {
@@ -94,10 +104,19 @@ private:
         return pixel_center + du + dv;
     }
 
+    Vector3D defocus_disk_sample() const {
+        //returns random point in the defocus disk
+        Vector3D random_unit_disk_point = Vector3D::random_in_unit_disk();
+        return  camera_center + 
+                (defocus_disk_u * random_unit_disk_point.x()) + 
+                (defocus_disk_v * random_unit_disk_point.y());
+    }
+
     Ray3D get_ray_sample(int i, int j) const {
         Vector3D pixel_center = pixel00_loc + i*pixel_delta_u + j*pixel_delta_v;
         Vector3D random_point_in_pixel = get_random_point_in_pixel(pixel_center);
-        return Ray3D{camera_center, random_point_in_pixel - camera_center};
+        Vector3D ray_origin = (defocus_angle > 0) ? defocus_disk_sample() : camera_center;
+        return Ray3D{ray_origin, random_point_in_pixel - ray_origin};
     }
 
     Color ray_color(const Ray3D& pixel_ray, const Hittable& world, int depth = 0) const {
