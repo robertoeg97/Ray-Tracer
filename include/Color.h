@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Triple.h"
+#include "Random.h"
 
 /**
  * @brief color is represented by a 3D vector of floating-point types from 0.0 to 1.0
@@ -13,6 +14,10 @@ public:
     static constexpr int max_pixel_val = 255;   
 
     using Triple<Color>::Triple;    //inherit base class constructors
+
+    static Color random() {
+        return Color{random::random_float(0, 1), random::random_float(0, 1), random::random_float(0, 1)};
+    }
 
     void write_pixel(std::ostream& out) const {
         Color gamma = get_gamma();
