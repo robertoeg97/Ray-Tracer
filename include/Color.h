@@ -21,9 +21,9 @@ public:
     }
 
     static Color random(float_type low, float_type high) {
-        int r = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, low)));
-        int g = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, low)));
-        int b = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, low)));
+        float_type r = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
+        float_type g = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
+        float_type b = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
         return Color{r, g, b};
     }
 
