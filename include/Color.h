@@ -2,6 +2,7 @@
 #define COLOR_H
 
 #include <iostream>
+#include <algorithm>
 #include "Triple.h"
 #include "Random.h"
 
@@ -17,6 +18,13 @@ public:
 
     static Color random() {
         return Color{random::random_float(0, 1), random::random_float(0, 1), random::random_float(0, 1)};
+    }
+
+    static Color random(float_type low, float_type high) {
+        int r = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, low)));
+        int g = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, low)));
+        int b = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, low)));
+        return Color{r, g, b};
     }
 
     void write_pixel(std::ostream& out) const {
