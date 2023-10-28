@@ -25,6 +25,15 @@ private:
     }
 
 public:
+    static Vector3D random_in_unit_disk() {
+        while (true) {
+            Vector3D vec {random::random_float(-1, 1), random::random_float(-1, 1), 0};
+            if (vec.length_squared() < 1) {
+                return vec;
+            }
+        } 
+    }
+    
     static Vector3D random_sphere_unit_vector() {
         return random_in_unit_sphere().unit_vector();
     }
