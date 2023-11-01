@@ -9,13 +9,17 @@
 
 class Material;
 
-struct HitRecord {
-    bool is_hit = false;
-    Vector3D point {};
-    Vector3D unit_normal {};
-    float_type t {};
-    bool front_face {};
-    std::shared_ptr<Material> material_ptr {};
+/**
+ * @brief Data about how a light ray collided with a surface, and what the surface was.
+ * 
+ */
+struct HitRecord {  
+    bool is_hit = false;                            //true if a collision occured
+    Vector3D point {};                              //the point of collision
+    Vector3D unit_normal {};                        //the unit normal of the surface at the point of collision
+    float_type t {};                                //ray.origin + ray.direction*t is the point of collision
+    bool front_face {};                             //true if the collision occured on the same side as the normal
+    std::shared_ptr<Material> material_ptr {};      //a shared_ptr to the material that is collided with
 
     HitRecord() = default;
 
@@ -33,10 +37,22 @@ struct HitRecord {
 };
 
 
+/**
+ * @brief An abstract class detailing some object that ligth can collide with.
+ * 
+ */
 class Hittable {
 public:
     virtual ~Hittable() = default;
 
+    /**
+     * @brief Details how a light ray hit an object, and the material that it collided with.
+     * 
+     * @param ray The incoming light ray.
+     * @param t_interval The interval of time units that will result in a valid collision.
+     * Everything on or outside of this range is considered na non-successful collision.
+     * @return HitRecord The resulting collision data.
+     */
     virtual HitRecord hit(const Ray3D& ray, const Interval& t_interval) const = 0;
 };
 

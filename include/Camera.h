@@ -12,6 +12,10 @@
 #include "Material.h"
 #include "Random.h"
 
+/**
+ * @brief A class representing a camera that can capture light from the world.
+ * 
+ */
 class Camera {
 private:
     //recursion limit
@@ -19,12 +23,13 @@ private:
     //sampling info
     int samples_per_pixel = 10;     //provides antialiasing
     //camera info
-    Vector3D camera_center {0, 0, 0};       
-    Vector3D camera_lens_direction {0, 0, -1};
-    Vector3D camera_up_direction {0, 1, 0};
-    float_type defocus_angle = 0;
-    float_type focus_distance = 10;
-    float_type vfov = 90.0;                 //degrees
+    Vector3D camera_center {0, 0, 0};               //the center of the camera
+    Vector3D camera_lens_direction {0, 0, -1};      //the direction that the caemra elns is pointing
+    Vector3D camera_up_direction {0, 1, 0};         //the direction that is "up" from the camer'as perspective
+    float_type defocus_angle = 0;                   //the degree of the cone tip with apex at the focus center 
+                                                    //and base at the lens
+    float_type focus_distance = 10;                 //units in the direction of the lens that images will be in focus
+    float_type vfov = 90.0;                         //degrees
     //image info
     float_type aspect_ratio = 16.0/9.0;     //image width to height ratio
     int image_width = 640;                  //in pixels
@@ -40,6 +45,20 @@ private:
     Vector3D defocus_disk_v {}; //defocus disk vertical radius
     
 public:
+    /**
+     * @brief Construct a new Camera object
+     * 
+     * @param aspect_ratio_ The target aspect ratio of the images the camera produces.
+     * @param image_width_ The image width of the camera's images (in pixels).
+     * @param camera_center_ The location of the center of the camera lens.
+     * @param camera_lens_direction_ The direction that the camera lens is pointing.
+     * @param camera_up_direction_ The direction that represents "up" from the camera's perspective.
+     * @param defocus_angle_ The angle of the cone shaped by the lens and the focus point of the camera.
+     * @param focus_distance_ The ditance of the point that will be in perfect focus.
+     * @param vfov_ The vertical field of view of the image (in degrees).
+     * @param samples_per_pixel_ The number of samples used to generate each pixel.
+     * @param max_depth_ The max number of reflections/refractions that the camera will trace for any light ray.
+     */
     Camera( float_type aspect_ratio_, int image_width_, 
             Vector3D camera_center_, Vector3D camera_lens_direction_, Vector3D camera_up_direction_,
             float_type defocus_angle_, float_type focus_distance_,
@@ -80,6 +99,11 @@ public:
         defocus_disk_v = v * defocus_radius;
     }
 
+    /**
+     * @brief Writes an image of world that the camera captures in PPM format to std::cout
+     * 
+     * @param world the world that the camers is observing
+     */
     void render(const Hittable& world) const {
         std::cout << "P3\n" << image_width << ' ' << image_height << '\n' << Color::max_pixel_val << '\n';
         for (int j = 0; j < image_height; ++j) {
@@ -97,13 +121,24 @@ public:
         std::clog << "\rDone.                     \n";
     }
 
-private:
+private:   
+    /**
+     * @brief Get a random point in the bounds of a pixel.
+     * 
+     * @param pixel_center The location of the center of the desired pixel sample.
+     * @return Vector3D a random point in the pixel
+     */
     Vector3D get_random_point_in_pixel(const Vector3D& pixel_center) const {
         Vector3D du = random::random_float(-.5, .5) * pixel_delta_u;
         Vector3D dv = random::random_float(-.5, .5) * pixel_delta_v;
         return pixel_center + du + dv;
     }
 
+    /**
+     * @brief Returns a random point in the defocus disk (lens)
+     * 
+     * @return Vector3D a ranodm point on the lens
+     */
     Vector3D defocus_disk_sample() const {
         //returns random point in the defocus disk
         Vector3D random_unit_disk_point = Vector3D::random_in_unit_disk();
@@ -112,13 +147,28 @@ private:
                 (defocus_disk_v * random_unit_disk_point.y());
     }
 
+    /**
+     * @brief Get a random ray that from the lens to the pixel.
+     * 
+     * @param i the horizontal index of the pixel
+     * @param j the vertical index of the pixel
+     * @return Ray3D the ranodm ray
+     */
     Ray3D get_ray_sample(int i, int j) const {
         Vector3D pixel_center = pixel00_loc + i*pixel_delta_u + j*pixel_delta_v;
-        Vector3D random_point_in_pixel = get_random_point_in_pixel(pixel_center);
-        Vector3D ray_origin = (defocus_angle > 0) ? defocus_disk_sample() : camera_center;
+        Vector3D random_point_in_pixel = get_random_point_in_pixel(pixel_center);           //antialiasing
+        Vector3D ray_origin = (defocus_angle > 0) ? defocus_disk_sample() : camera_center;  //defocus
         return Ray3D{ray_origin, random_point_in_pixel - ray_origin};
     }
 
+    /**
+     * @brief Traces a ray of light from the camera through the world to get the resulting color.
+     * 
+     * @param pixel_ray The light ray generated by the camera.
+     * @param world The world that the camer is observing
+     * @param depth The limit to the number of object interactions that a single ray can undergo.
+     * @return Color: the resulting color captured by the light ray.
+     */
     Color ray_color(const Ray3D& pixel_ray, const Hittable& world, int depth = 0) const {
         //if we've exceeded the ray reflection limit, no more light is gathered
         if (depth >= max_depth) {

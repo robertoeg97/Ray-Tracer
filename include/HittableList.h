@@ -8,18 +8,44 @@
 #include "Ray3D.h"
 #include "Interval.h"
 
+/**
+ * @brief A class containing multiple possible Hittable objects.
+ * 
+ */
 class HittableList : public Hittable {
 public:
     std::vector<std::shared_ptr<Hittable>> hittables {};
 
+    /**
+     * @brief Construct a new Hittable List object
+     * 
+     */
     HittableList() = default;
     
+    /**
+     * @brief Empties out the HittablieList
+     * 
+     */
     void clear() {hittables.clear();}
 
+    /**
+     * @brief Add one object to the HittableList
+     * 
+     * @param object A shared_ptr to the Hittable object.
+     */
     void add(std::shared_ptr<Hittable> object) {
         hittables.push_back(object);
     }
 
+    /**
+     * @brief Details how a light ray interacts with all objects within the list.
+     * If light would collide with multiple objects, it collides with the one closest to the light's origin.
+     * 
+     * @param ray The incoming light ray.
+     * @param t_interval The interval of time units that will result in a valid collision.
+     * Everything on or outside of this range is considered na non-successful collision.
+     * @return HitRecord The resulting collision data.
+     */
     HitRecord hit(const Ray3D& ray, const Interval& t_interval) const override {
         HitRecord hit_record {};
         float_type t_closest = t_interval.max;

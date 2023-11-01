@@ -6,6 +6,11 @@
 #include <array>
 #include "Constants.h"
 
+/**
+ * @brief Generates general purpose functions for a derived vector-like class, such as Vector3D or Color.
+ * 
+ * @tparam Derived: the vector-like class which inherits these member functions.
+ */
 template <typename Derived> 
 class Triple {
 protected:

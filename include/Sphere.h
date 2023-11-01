@@ -9,6 +9,10 @@
 #include "Interval.h"
 #include "Material.h"
 
+/**
+ * @brief Represents a spherical object that can interact with light rays.
+ * 
+ */
 class Sphere : public Hittable {
 private:
     Vector3D m_center;
@@ -16,6 +20,13 @@ private:
     std::shared_ptr<Material> m_material_ptr;
 
 public:
+    /**
+     * @brief Construct a new Sphere object
+     * 
+     * @param center a Vector3D object representing the position of the sphere's center
+     * @param radius a floating point value representing the radius of the sphere
+     * @param material_ptr a pointer to the type of the sphere material
+     */
     Sphere (const Vector3D& center, float_type radius, std::shared_ptr<Material> material_ptr) : 
         m_center{center}, m_radius{radius}, m_material_ptr{material_ptr} {}
 
