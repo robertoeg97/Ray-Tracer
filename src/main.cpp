@@ -1,6 +1,9 @@
-#include <iostream>
 #include <algorithm>
 #include <memory>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include "processArguments.h"
 #include "Constants.h"
 #include "Vector3D.h"
 #include "HittableList.h"
@@ -10,7 +13,10 @@
 #include "Random.h"
 
 
-int main() {
+int main(int argc, char *argv[]) {
+    //process inputs and open output file
+    std::fstream output_file = process_arguments(argc, argv);
+
     //world info
     HittableList world;
 
@@ -19,7 +25,7 @@ int main() {
     world.add(std::make_shared<Sphere>(Vector3D{0, -1000, 0}, 1000, material_ground));
 
     //random sphere generation
-    for (int a = -11; a <= 11; ++a) {
+    /*for (int a = -11; a <= 11; ++a) {
         for (int b = -11; b <= 11; ++b) { 
             auto choose_material = random::random_float(0, 1);
             Vector3D center {a + (float_type).9 * random::random_float(0, 1), .2, b + (float_type).9 * random::random_float(0, 1)};
@@ -43,7 +49,7 @@ int main() {
                 world.add(std::make_shared<Sphere>(center, .2, sphere_material));
             }
         }
-    }
+    }*/
 
     //extra big spheres
     auto material1 = std::make_shared<Dielectric>(1.5);
@@ -65,7 +71,7 @@ int main() {
     constexpr float_type defocus_angle = .6;
     constexpr float_type focus_distance = 10;
     constexpr float_type vfov = 20;
-    constexpr int samples_per_pixel = 50;
+    constexpr int samples_per_pixel = 10;
     constexpr int max_depth = 50;
     const Camera camera (aspect_ratio, image_width, 
                         camera_center, camera_lens_direction, camera_up_direction, 
@@ -73,7 +79,10 @@ int main() {
                         vfov, samples_per_pixel, max_depth);
 
     //render
-    camera.render(world);
+    camera.render(world, output_file);
+
+    //close file
+    close_file(output_file);
 
     return 0;
 }

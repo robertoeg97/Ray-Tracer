@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <iostream>
+#include <fstream>
 #include <cmath>
 #include "Constants.h"
 #include "Vector3D.h"
@@ -100,12 +100,12 @@ public:
     }
 
     /**
-     * @brief Writes an image of world that the camera captures in PPM format to std::cout
+     * @brief Writes an image of world that the camera captures in PPM format to file_out.
      * 
-     * @param world the world that the camers is observing
+     * @param world the world that the camera is observing
      */
-    void render(const Hittable& world) const {
-        std::cout << "P3\n" << image_width << ' ' << image_height << '\n' << Color::max_pixel_val << '\n';
+    void render(const Hittable& world, std::fstream& file_out) const {
+        file_out << "P3\n" << image_width << ' ' << image_height << '\n' << Color::max_pixel_val << '\n';
         for (int j = 0; j < image_height; ++j) {
             std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
             for (int i = 0; i < image_width; ++i) {
@@ -115,13 +115,13 @@ public:
                     sum_color_samples += color_sample;
                 }
                 Color pixel_color = sum_color_samples.scale(samples_per_pixel);
-                pixel_color.write_pixel(std::cout);
+                pixel_color.write_pixel(file_out);
             }
         }
         std::clog << "\rDone.                     \n";
     }
 
-private:   
+private:
     /**
      * @brief Get a random point in the bounds of a pixel.
      * 
@@ -185,6 +185,7 @@ private:
             return Color(0, 0, 0); //failed scatter
         }
 
+        //background coloring logic
         Vector3D unit_direction = pixel_ray.direction().unit_vector();
         float_type a = .5 * (unit_direction.y() + 1.0);
         return (1.0-a)*Color(1, 1, 1) + a*Color(.5, .7, 1);

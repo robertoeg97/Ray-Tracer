@@ -1,7 +1,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include <iostream>
+#include <fstream>
 #include <algorithm>
 #include "Triple.h"
 #include "Random.h"
@@ -46,7 +46,7 @@ public:
      * 
      * @param out the std::ostream object that the color is printed to.
      */
-    void write_pixel(std::ostream& out) const {
+    void write_pixel(std::fstream& out) const {
         Color gamma = get_gamma();
         out << static_cast<int>(gamma.x() * (max_pixel_val+.999)) << ' '
             << static_cast<int>(gamma.y() * (max_pixel_val+.999)) << ' '
