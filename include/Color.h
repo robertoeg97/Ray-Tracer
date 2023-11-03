@@ -22,7 +22,7 @@ public:
      * @return Color: The resulting random color.
      */
     static Color random() {
-        return Color{random::random_float(0, 1), random::random_float(0, 1), random::random_float(0, 1)};
+        return Color{Random::random_float(0, 1), Random::random_float(0, 1), Random::random_float(0, 1)};
     }
 
     /**
@@ -35,9 +35,9 @@ public:
      * @return Color The random color.
      */
     static Color random(float_type low, float_type high) {
-        float_type r = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
-        float_type g = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
-        float_type b = random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
+        float_type r = Random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
+        float_type g = Random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
+        float_type b = Random::random_float(std::fmax(0, std::fmin(1, low)), std::fmax(0, std::fmin(1, high)));
         return Color{r, g, b};
     }
 

@@ -24,7 +24,7 @@ private:
      * @return Vector3D: a random vector
      */
     static Vector3D random(float_type min, float_type max) { 
-        return Vector3D{random::random_float(min, max), random::random_float(min, max), random::random_float(min, max)};
+        return Vector3D{Random::random_float(min, max), Random::random_float(min, max), Random::random_float(min, max)};
     }
 
     /**
@@ -51,7 +51,7 @@ public:
     static Vector3D random_in_unit_disk() {
         //rejection method
         while (true) {
-            Vector3D vec {random::random_float(-1, 1), random::random_float(-1, 1), 0};
+            Vector3D vec {Random::random_float(-1, 1), Random::random_float(-1, 1), 0};
             if (vec.length_squared() < 1) {
                 return vec;
             }
@@ -112,7 +112,7 @@ public:
         float_type cos_theta = fmin(-(*this).dot(unit_normal), 1.0);
         float_type sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
         bool total_internal_reflection = eta_from_eta_to_ratio * sin_theta > 1.0;
-        if (total_internal_reflection || reflectance > random::random_float(0, 1)) {
+        if (total_internal_reflection || reflectance > Random::random_float(0, 1)) {
             //reflection
             return reflect(unit_normal);
         }

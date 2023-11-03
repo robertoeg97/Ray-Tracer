@@ -129,8 +129,8 @@ private:
      * @return Vector3D a random point in the pixel
      */
     Vector3D get_random_point_in_pixel(const Vector3D& pixel_center) const {
-        Vector3D du = random::random_float(-.5, .5) * pixel_delta_u;
-        Vector3D dv = random::random_float(-.5, .5) * pixel_delta_v;
+        Vector3D du = Random::random_float(-.5, .5) * pixel_delta_u;
+        Vector3D dv = Random::random_float(-.5, .5) * pixel_delta_v;
         return pixel_center + du + dv;
     }
 
