@@ -10,7 +10,7 @@ This project implements a ray tracer following the Ray Tracing in One Weekend bo
 
 2. `git clone https://github.com/robertoeg97/Ray-Tracer.git`
 
-### Building
+### Generate Build Files
 
 3. `cd Ray-Tracer`
 
@@ -20,11 +20,13 @@ This project implements a ray tracer following the Ray Tracing in One Weekend bo
 
 6. `cmake ..`
 
+### Build
+
+7. `make`
+
 ### Running
 
-7. `cd ..`
-
-8. `build/rayTracer <image-filename>`
+8. `build/ray-tracer <image-filename>`
 
 The image that is generated is specified by the scene drawn in main.cpp
 

@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     constexpr float_type defocus_angle = .6;
     constexpr float_type focus_distance = 10;
     constexpr float_type vfov = 20;
-    constexpr int samples_per_pixel = 40;
+    constexpr int samples_per_pixel = 10;
     constexpr int max_depth = 50;
     const Camera camera (aspect_ratio, image_width, 
                         camera_center, camera_lens_direction, camera_up_direction, 

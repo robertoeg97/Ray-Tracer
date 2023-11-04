@@ -36,7 +36,8 @@ inline std::fstream process_arguments(int argc, char *argv[]) {
         throw std::invalid_argument("Usage: " + std::string(argv[0]) + " <output_filename>");
     }
 
-    std::string filename = extract_filename(argv);
+    std::string relative_path = "../";
+    std::string filename = relative_path + extract_filename(argv);
     std::fstream file_out {filename, std::ios::out | std::ios::trunc};
     if (file_out.fail()) {
         throw std::ios_base::failure("Error: Unable to open output file");
