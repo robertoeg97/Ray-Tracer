@@ -30,4 +30,4 @@ The image that is generated is specified by the scene drawn in main.cpp
 
 ## Sample Images
 
-![Bunch of Spheres](/images/multiple_sphere_render.ppm)
+![Bunch of Spheres](/images/multiple_sphere_render.png)
