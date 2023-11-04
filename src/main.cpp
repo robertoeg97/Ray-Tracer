@@ -25,10 +25,10 @@ int main(int argc, char *argv[]) {
     world.add(std::make_shared<Sphere>(Vector3D{0, -1000, 0}, 1000, material_ground));
 
     //random sphere generation
-    /*for (int a = -11; a <= 11; ++a) {
+    for (int a = -11; a <= 11; ++a) {
         for (int b = -11; b <= 11; ++b) { 
-            auto choose_material = random::random_float(0, 1);
-            Vector3D center {a + (float_type).9 * random::random_float(0, 1), .2, b + (float_type).9 * random::random_float(0, 1)};
+            auto choose_material = Random::random_float(0, 1);
+            Vector3D center {a + (float_type).9 * Random::random_float(0, 1), .2, b + (float_type).9 * Random::random_float(0, 1)};
             if ((center - Vector3D{4, .2, 0}).length() > .9) {
                 std::shared_ptr<Material> sphere_material;
                 if (choose_material < .8) {
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
                 else if (choose_material < .95) {
                     //metal
                     Color albedo = Color::random(.5, 1);
-                    float_type fuzz_factor = random::random_float(0, .5);
+                    float_type fuzz_factor = Random::random_float(0, .5);
                     sphere_material = std::make_shared<Metal>(albedo, fuzz_factor);
                 }
                 else {
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
                 world.add(std::make_shared<Sphere>(center, .2, sphere_material));
             }
         }
-    }*/
+    }
 
     //extra big spheres
     auto material1 = std::make_shared<Dielectric>(1.5);
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     constexpr float_type defocus_angle = .6;
     constexpr float_type focus_distance = 10;
     constexpr float_type vfov = 20;
-    constexpr int samples_per_pixel = 10;
+    constexpr int samples_per_pixel = 40;
     constexpr int max_depth = 50;
     const Camera camera (aspect_ratio, image_width, 
                         camera_center, camera_lens_direction, camera_up_direction, 
