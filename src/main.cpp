@@ -11,9 +11,10 @@
 #include "Camera.h"
 #include "Material.h"
 #include "Random.h"
+#include "TimeFunction.h"
 
 
-int main(int argc, char *argv[]) {
+int main_(int argc, char *argv[]) {
     //process inputs and open output file
     std::fstream output_file = process_arguments(argc, argv);
 
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]) {
     constexpr float_type defocus_angle = .6;
     constexpr float_type focus_distance = 10;
     constexpr float_type vfov = 20;
-    constexpr int samples_per_pixel = 10;
+    constexpr int samples_per_pixel = 500;
     constexpr int max_depth = 50;
     const Camera camera (aspect_ratio, image_width, 
                         camera_center, camera_lens_direction, camera_up_direction, 
@@ -85,4 +86,8 @@ int main(int argc, char *argv[]) {
     close_file(output_file);
 
     return 0;
+}
+
+int main(int argc, char *argv[]) {
+    time_function(main_, argc, argv);
 }
