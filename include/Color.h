@@ -1,10 +1,12 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include <fstream>
+#include <string>
 #include <algorithm>
+#include "ImageData.h"
 #include "Triple.h"
 #include "Random.h"
+#include "Constants.h"
 
 /**
  * @brief color is represented by a 3D vector of floating-point types from 0.0 to 1.0
@@ -12,8 +14,6 @@
  */
 class Color : public Triple<Color> {
 public:
-    static constexpr int max_pixel_val = 255;   //the max pixel value of a color, representing full saturation
-
     using Triple<Color>::Triple;    //inherit base class constructors
 
     /**
@@ -44,13 +44,20 @@ public:
     /**
      * @brief Prints the Color to out, with component value of 1 scaled to the max_pixel_val.
      * 
-     * @param out the std::ostream object that the color is printed to.
+     * @tparam WIDTH 
+     * @tparam HEIGHT 
+     * @param row 
+     * @param col 
+     * @param image_data 
      */
-    void write_pixel(std::fstream& out) const {
+    template <unsigned long WIDTH, unsigned long HEIGHT>
+    void write_pixel(int row, int col, ImageData<WIDTH, HEIGHT>& image_data) const { 
         Color gamma = get_gamma();
-        out << static_cast<int>(gamma.x() * (max_pixel_val+.999)) << ' '
-            << static_cast<int>(gamma.y() * (max_pixel_val+.999)) << ' '
-            << static_cast<int>(gamma.z() * (max_pixel_val+.999)) << '\n';
+        std::string r = std::to_string(static_cast<int>(gamma.x() * (ColorConstants::max_pixel_val+.999)));
+        std::string g = std::to_string(static_cast<int>(gamma.y() * (ColorConstants::max_pixel_val+.999)));
+        std::string b = std::to_string(static_cast<int>(gamma.z() * (ColorConstants::max_pixel_val+.999)));
+        std::string pixel_data = r + ' ' + g + ' ' + b + '\n';
+        image_data.write_pixel(row, col, pixel_data);
     }
 
 private:

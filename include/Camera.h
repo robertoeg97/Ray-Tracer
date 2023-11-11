@@ -11,6 +11,10 @@
 #include "Sphere.h"
 #include "Material.h"
 #include "Random.h"
+#include "CameraParameters.h"
+#include "ImageData.h"
+
+using namespace CameraParams;
 
 /**
  * @brief A class representing a camera that can capture light from the world.
@@ -18,22 +22,6 @@
  */
 class Camera {
 private:
-    //recursion limit
-    int max_depth = 10;
-    //sampling info
-    int samples_per_pixel = 10;     //provides antialiasing
-    //camera info
-    Vector3D camera_center {0, 0, 0};               //the center of the camera
-    Vector3D camera_lens_direction {0, 0, -1};      //the direction that the caemra elns is pointing
-    Vector3D camera_up_direction {0, 1, 0};         //the direction that is "up" from the camer'as perspective
-    float_type defocus_angle = 0;                   //the degree of the cone tip with apex at the focus center 
-                                                    //and base at the lens
-    float_type focus_distance = 10;                 //units in the direction of the lens that images will be in focus
-    float_type vfov = 90.0;                         //degrees
-    //image info
-    float_type aspect_ratio = 16.0/9.0;     //image width to height ratio
-    int image_width = 640;                  //in pixels
-    int image_height {};                    //in pixels
     //viewport info
     Vector3D pixel_delta_u {};         //length of single pixel along width, pointing right
     Vector3D pixel_delta_v {};         //length of single pixel along height, pointing down
@@ -47,34 +35,9 @@ private:
 public:
     /**
      * @brief Construct a new Camera object
-     * 
-     * @param aspect_ratio_ The target aspect ratio of the images the camera produces.
-     * @param image_width_ The image width of the camera's images (in pixels).
-     * @param camera_center_ The location of the center of the camera lens.
-     * @param camera_lens_direction_ The direction that the camera lens is pointing.
-     * @param camera_up_direction_ The direction that represents "up" from the camera's perspective.
-     * @param defocus_angle_ The angle of the cone shaped by the lens and the focus point of the camera.
-     * @param focus_distance_ The ditance of the point that will be in perfect focus.
-     * @param vfov_ The vertical field of view of the image (in degrees).
-     * @param samples_per_pixel_ The number of samples used to generate each pixel.
-     * @param max_depth_ The max number of reflections/refractions that the camera will trace for any light ray.
      */
-    Camera( float_type aspect_ratio_, int image_width_, 
-            Vector3D camera_center_, Vector3D camera_lens_direction_, Vector3D camera_up_direction_,
-            float_type defocus_angle_, float_type focus_distance_,
-            float_type vfov_, int samples_per_pixel_, int max_depth_) : 
-        max_depth{max_depth_},
-        samples_per_pixel{samples_per_pixel_},
-        camera_center{camera_center_},
-        camera_lens_direction{camera_lens_direction_},
-        camera_up_direction{camera_up_direction_},
-        defocus_angle{defocus_angle_},
-        focus_distance{focus_distance_},
-        vfov{vfov_},
-        aspect_ratio{aspect_ratio_},   
-        image_width{image_width_}
+    Camera()
     {
-        image_height = std::max(static_cast<int>(image_width/aspect_ratio), 1);        
         //viewport dimensions
         float_type theta = degrees_to_radians(vfov);
         float_type h = focus_distance * std::tan(theta/2);
@@ -104,8 +67,8 @@ public:
      * 
      * @param world the world that the camera is observing
      */
-    void render(const Hittable& world, std::fstream& file_out) const {
-        file_out << "P3\n" << image_width << ' ' << image_height << '\n' << Color::max_pixel_val << '\n';
+    void render(const Hittable& world, const std::string& filename) const {
+        ImageData<image_width, image_height> image_data{filename};
         for (int j = 0; j < image_height; ++j) {
             std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
             for (int i = 0; i < image_width; ++i) {
@@ -115,7 +78,7 @@ public:
                     sum_color_samples += color_sample;
                 }
                 Color pixel_color = sum_color_samples.scale(samples_per_pixel);
-                pixel_color.write_pixel(file_out);
+                pixel_color.write_pixel(j, i, image_data);
             }
         }
         std::clog << "\rDone.                     \n";

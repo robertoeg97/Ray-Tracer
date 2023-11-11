@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "processArguments.h"
+#include "ProcessArguments.h"
 #include "Constants.h"
 #include "Vector3D.h"
 #include "HittableList.h"
@@ -13,10 +13,12 @@
 #include "Random.h"
 #include "TimeFunction.h"
 
+#include "ImageData.h"
+
 
 int main_(int argc, char *argv[]) {
-    //process inputs and open output file
-    std::fstream output_file = process_arguments(argc, argv);
+    //process inputs to get filename
+    std::string filename = process_arguments(argc, argv);
 
     //world info
     HittableList world;
@@ -62,32 +64,17 @@ int main_(int argc, char *argv[]) {
     auto material3 = std::make_shared<Metal>(Color(.7, .6, .5), 0);
     world.add(std::make_shared<Sphere>(Vector3D(4, 1, 0), 1, material3));
 
-    //camera info
-    constexpr float_type aspect_ratio = 16.0/9.0;
-    constexpr int image_width = 1200;
-    constexpr Vector3D camera_center {13, 2, 3};
-    constexpr Vector3D camera_target {0, 0, 0};
-    constexpr Vector3D camera_lens_direction = camera_target - camera_center;
-    constexpr Vector3D camera_up_direction {0, 1, 0};
-    constexpr float_type defocus_angle = .6;
-    constexpr float_type focus_distance = 10;
-    constexpr float_type vfov = 20;
-    constexpr int samples_per_pixel = 500;
-    constexpr int max_depth = 50;
-    const Camera camera (aspect_ratio, image_width, 
-                        camera_center, camera_lens_direction, camera_up_direction, 
-                        defocus_angle, focus_distance,
-                        vfov, samples_per_pixel, max_depth);
+    //camera construction
+    Camera camera {};
 
     //render
-    camera.render(world, output_file);
-
-    //close file
-    close_file(output_file);
+    camera.render(world, filename);
 
     return 0;
 }
 
 int main(int argc, char *argv[]) {
     time_function(main_, argc, argv);
+
+    return 0;
 }

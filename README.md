@@ -2,6 +2,8 @@
 
 This project implements a ray tracer following the Ray Tracing in One Weekend book series: https://raytracing.github.io/
 
+The image that is generated is specified by the scene drawn in main.cpp
+
 ## Instructions
 
 ### Cloning
@@ -10,25 +12,28 @@ This project implements a ray tracer following the Ray Tracing in One Weekend bo
 
 2. `git clone https://github.com/robertoeg97/Ray-Tracer.git`
 
-### Generate Build Files
+### Generate and run Debug Build Files
 
-3. `cd Ray-Tracer`
+```
+cd Ray-Tracer
+mkdir debug
+cd debug
+cmake -DCMAKE_BUILD_TYPE=Debug ..
+cmake --build .
+./ray-tracer <image-filename>
+```
 
-4. `mkdir build`
+### Generate and run Release Build Files
 
-5. `cd build`
+```
+cd Ray-Tracer
+mkdir release
+cd release
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build .
+./ray-tracer <image-filename>
+```
 
-6. `cmake ..`
-
-### Build
-
-7. `make`
-
-### Running
-
-8. `build/ray-tracer <image-filename>`
-
-The image that is generated is specified by the scene drawn in main.cpp
 
 ## Sample Images
 
