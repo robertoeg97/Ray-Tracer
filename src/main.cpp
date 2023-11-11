@@ -35,18 +35,21 @@ int main_(int argc, char *argv[]) {
                     //matte
                     Color albedo = Color::random() * Color::random();
                     sphere_material = std::make_shared<Lambertian>(albedo);
+                    Vector3D center_end = center + Vector3D{0, Random::random_float(0, .5), 0}; //spheres will move
+                    world.add(std::make_shared<Sphere>(center, center_end, .2, sphere_material));
                 }
                 else if (choose_material < .95) {
                     //metal
                     Color albedo = Color::random(.5, 1);
                     float_type fuzz_factor = Random::random_float(0, .5);
                     sphere_material = std::make_shared<Metal>(albedo, fuzz_factor);
+                    world.add(std::make_shared<Sphere>(center, .2, sphere_material));
                 }
                 else {
                     //glass
                     sphere_material = std::make_shared<Dielectric>(1.5);
-                }
-                world.add(std::make_shared<Sphere>(center, .2, sphere_material));
+                    world.add(std::make_shared<Sphere>(center, .2, sphere_material));
+                }   
             }
         }
     }

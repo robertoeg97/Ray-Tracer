@@ -18,7 +18,7 @@ constexpr inline int get_image_height (int image_width, float_type aspect_ratio)
 
 namespace CameraParams {
     constexpr inline float_type aspect_ratio = 16.0/9.0;                                //desired image width to height ratio
-    constexpr inline int image_width = 1200;                                            //in pixels
+    constexpr inline int image_width = 400;                                            //in pixels
     constexpr inline int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
     constexpr inline Vector3D camera_center {13, 2, 3};                                 //the center of the camera
     constexpr inline Vector3D camera_target {0, 0, 0};
@@ -28,7 +28,7 @@ namespace CameraParams {
                                                                                         //and base at the lens
     constexpr inline float_type focus_distance = 10;                                    //units in the direction of the lens that images will be in focus
     constexpr inline float_type vfov = 20;                                              //degrees
-    constexpr inline int samples_per_pixel = 500;                                       //provides antialiasing
+    constexpr inline int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr inline int max_depth = 50;                                                //recursion limit
 }
 

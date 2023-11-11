@@ -13,6 +13,7 @@ class Ray3D {
 private:
     Vector3D m_origin {};
     Vector3D m_direction {};
+    float_type m_time = 0;
 
 public:
     Ray3D() = default;
@@ -23,10 +24,15 @@ public:
      * @param origin a Vector3D object representing the initial point in space of the light ray.
      * @param direction a Vector3D object representing the direction that the ray travels out of the origin.
      */
-    Ray3D(const Vector3D& origin, const Vector3D& direction) : m_origin{origin}, m_direction{direction} {}
+    Ray3D(const Vector3D& origin, const Vector3D& direction, float_type time = 0) : 
+        m_origin{origin}, 
+        m_direction{direction},
+        m_time{time}
+    {}
 
     Vector3D origin() const  {return m_origin;}
     Vector3D direction() const { return m_direction;}
+    float_type time() const {return m_time;};
 
     /**
      * @brief If the ray travels 1 direction vector every 1 time unit, 

@@ -59,7 +59,6 @@ public:
      * @return ScatterRecord detailing how the light behaves after the collision 
      */
     ScatterRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const override {
-        (void) ray_in;  //unused parameter
         constexpr bool success = true;  //always successful
         ////lambertian scattering equation: scattering proportional to cos(x), 
         //where x is the angle between normal and scatter direction
@@ -68,7 +67,7 @@ public:
         if (scatter_direction.near_zero()) {
             scatter_direction = hit_record.unit_normal;
         }
-        Ray3D scatter_ray {hit_record.point, scatter_direction};
+        Ray3D scatter_ray {hit_record.point, scatter_direction, ray_in.time()};
         return ScatterRecord{success, scatter_ray, albedo};
     }
 };
@@ -102,7 +101,8 @@ public:
     ScatterRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const override {
         constexpr bool success = true;  //always reflects
         Vector3D reflected_direction = ray_in.direction().unit_vector().reflect(hit_record.unit_normal);
-        Ray3D reflected_ray {hit_record.point, reflected_direction + fuzz*Vector3D::random_sphere_unit_vector()};
+        Vector3D fuzzed_direction = reflected_direction + fuzz*Vector3D::random_sphere_unit_vector();
+        Ray3D reflected_ray {hit_record.point, fuzzed_direction, ray_in.time()};
         return ScatterRecord{success, reflected_ray, albedo};
     }
 };
@@ -154,7 +154,7 @@ public:
         //theta = angle between normal and incident light ray
         float_type cos_theta = fmin(-unit_direction.dot(hit_record.unit_normal), 1.0);  
         Vector3D refracted_direction = unit_direction.refract(hit_record.unit_normal, refraction_ratio, reflectance(cos_theta, refraction_ratio));
-        Ray3D refracted_ray {hit_record.point, refracted_direction};
+        Ray3D refracted_ray {hit_record.point, refracted_direction, ray_in.time()};
         return ScatterRecord{success, refracted_ray, attenuation};  
     }
 };

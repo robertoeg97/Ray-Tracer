@@ -160,7 +160,7 @@ private:
     /**
      * @brief Returns a random point in the defocus disk (lens)
      * 
-     * @return Vector3D a ranodm point on the lens
+     * @return Vector3D a random point on the lens
      */
     Vector3D defocus_disk_sample() const {
         //returns random point in the defocus disk
@@ -181,7 +181,10 @@ private:
         Vector3D pixel_center = pixel00_loc + i*pixel_delta_u + j*pixel_delta_v;
         Vector3D random_point_in_pixel = get_random_point_in_pixel(pixel_center);           //antialiasing
         Vector3D ray_origin = (defocus_angle > 0) ? defocus_disk_sample() : camera_center;  //defocus
-        return Ray3D{ray_origin, random_point_in_pixel - ray_origin};
+        constexpr float_type start_time = 0;
+        constexpr float_type end_time = 1;
+        float_type ray_time = Random::random_float(start_time, end_time);
+        return Ray3D{ray_origin, random_point_in_pixel - ray_origin, ray_time};
     }
 
     /**
