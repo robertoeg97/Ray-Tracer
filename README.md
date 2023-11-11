@@ -2,9 +2,11 @@
 
 This project implements a ray tracer following the Ray Tracing in One Weekend book series: https://raytracing.github.io/
 
-The image that is generated is specified by the scene drawn in main.cpp
-
 ## Instructions
+
+This project relies on the mmap functionality to enable multithreading. As a result, it will not be compatible with non-Unix operating systems.
+
+The image that is generated is specified by the scene drawn in main.cpp
 
 ### Cloning
 
@@ -35,6 +37,13 @@ cmake --build .
 ```
 
 
-## Sample Images
+## Sample Image
 
 ![Bunch of Spheres](/images/multiple_sphere_render.png)
+
+## A Note on Performance
+
+This project implements multithreading. 
+A rough benchmark on a 6 core PC has the above render taking ~1831 seconds before adding multithreading, 
+and ~473 seconds after adding multithreading, 
+for a speedup of ~3.87.

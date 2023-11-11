@@ -28,7 +28,7 @@ namespace CameraParams {
                                                                                         //and base at the lens
     constexpr inline float_type focus_distance = 10;                                    //units in the direction of the lens that images will be in focus
     constexpr inline float_type vfov = 20;                                              //degrees
-    constexpr inline int samples_per_pixel = 5;//500;                                       //provides antialiasing
+    constexpr inline int samples_per_pixel = 500;                                       //provides antialiasing
     constexpr inline int max_depth = 50;                                                //recursion limit
 }
 

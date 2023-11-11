@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <cmath>
+#include <future>
 #include "Constants.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
@@ -63,15 +64,33 @@ public:
     }
 
     /**
-     * @brief Writes an image of world that the camera captures in PPM format to file_out.
+     * @brief Writes an image of world that the camera captures in PPM format to a file.
      * 
-     * @param world the world that the camera is observing
+     * @param world The world that the camera can observe.
+     * @param filename The name of the file to be written. The file name must include a path and .ppm extension.
+     * The file will be truncated if it already exists, or created if it doesn't.
      */
     void render(const Hittable& world, const std::string& filename) const {
         ImageData<image_width, image_height> image_data{filename};
-        for (int j = 0; j < image_height; ++j) {
-            std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
-            for (int i = 0; i < image_width; ++i) {
+        parallel_render_tile(0, image_height, 0, image_width, world, image_data);
+    }
+
+private:   
+    /**
+     * @brief Renders a rectangle of pixels.
+     * 
+     * @param row_min the minimum vertical index of the pixel range. inclusive.
+     * @param row_max the maximum vertical index of the pixel range. exclusive.
+     * @param col_min the minimum horizontal index of the pixel range. inclusive.
+     * @param col_max the maximum horizontal index of the pixel range. exclusive.
+     * @param world the world that the camera will render.
+     * @param image_data the object where pixel data will be written to.
+     */
+    void render_tile(   int row_min, int row_max, int col_min, int col_max, 
+                        const Hittable& world, ImageData<image_width, image_height>& image_data) const
+    {   
+        for (int j = row_min; j < row_max; ++j) {
+            for (int i = col_min; i < col_max; ++i) {
                 ColorSum sum_color_samples {0, 0, 0};    
                 for (int s = 0; s < samples_per_pixel; ++s) {
                     Color color_sample = ray_color(get_ray_sample(i, j), world);
@@ -81,10 +100,51 @@ public:
                 pixel_color.write_pixel(j, i, image_data);
             }
         }
-        std::clog << "\rDone.                     \n";
     }
 
-private:
+    /**
+     * @brief Divide-and-conquer to render a rectangle of pixels on multiple threads. 
+     * 
+     * @param row_min the minimum vertical index of the pixel range. inclusive.
+     * @param row_max the maximum vertical index of the pixel range. exclusive.
+     * @param col_min the minimum horizontal index of the pixel range. inclusive.
+     * @param col_max the maximum horizontal index of the pixel range. exclusive.
+     * @param world the world that the camera will render.
+     * @param image_data the object where pixel data will be written to.
+     */
+    void parallel_render_tile(  int row_min, int row_max, int col_min, int col_max, 
+                                const Hittable& world, ImageData<image_width, image_height>& image_data) const
+    {   
+        //if the number of pixels is small enough, render them all on this thread
+        constexpr int max_pixels_per_thread = 100;  //rougly 10x10 pixel grid
+        if ((row_max - row_min) * (col_max - col_min) <= max_pixels_per_thread) {
+            render_tile(row_min, row_max, col_min, col_max, world, image_data);
+        }
+        //divide the region into two, rendering one with std::async and the other on this thread.
+        else {
+            int horizontal_pixels = row_max - row_min;
+            int vertical_pixels = col_max - col_min;
+            if (horizontal_pixels >= vertical_pixels) {
+                //horizontal cut
+                int row_mid = row_min + (row_max - row_min)/2;
+                std::future<void> left_half = std::async(&Camera::parallel_render_tile, this, 
+                                                        row_min, row_mid, col_min, col_max, 
+                                                        std::ref(world), std::ref(image_data));
+                parallel_render_tile(row_mid, row_max, col_min, col_max, world, image_data);
+                left_half.get();
+            }
+            else {
+                //vertical cut
+                int col_mid = col_min + (col_max - col_min)/2;
+                std::future<void> top_half = std::async(&Camera::parallel_render_tile, this, 
+                                                        row_min, row_max, col_min, col_mid, 
+                                                        std::ref(world), std::ref(image_data));
+                parallel_render_tile(row_min, row_max, col_mid, col_max, world, image_data);
+                top_half.get();
+            }
+        }
+    }
+
     /**
      * @brief Get a random point in the bounds of a pixel.
      * 
@@ -111,7 +171,7 @@ private:
     }
 
     /**
-     * @brief Get a random ray that from the lens to the pixel.
+     * @brief Get a random ray that travels from some point on the lens to some point on the pixel.
      * 
      * @param i the horizontal index of the pixel
      * @param j the vertical index of the pixel
