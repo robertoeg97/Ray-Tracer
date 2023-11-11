@@ -13,9 +13,6 @@
 #include "Random.h"
 #include "TimeFunction.h"
 
-#include "ImageData.h"
-
-
 int main_(int argc, char *argv[]) {
     //process inputs to get filename
     std::string filename = process_arguments(argc, argv);

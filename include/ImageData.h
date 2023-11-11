@@ -22,7 +22,7 @@ public:
      * 
      * @param filename the name of the file to be opened. Can either be a new or existing file.
      * Truncates (clears) the file is it already exists.
-     * Does not 
+     * Has read and write permissions.
      */
     FileDescriptor(const std::string& filename) : fd {open(filename.c_str(), O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR)} 
     {
@@ -32,12 +32,25 @@ public:
         }
     }
 
+    /**
+     * @brief Truncates the file to the specified size.
+     * Throws std::runtime_error if the truncation fails.
+     * 
+     * @param file_size the size of the file
+     */
     void truncate(long file_size) {
         if (ftruncate(fd, file_size) == -1) {  
             throw std::runtime_error("Error: Unable to resize output file"); 
         }
     }
 
+    /**
+     * @brief Writes a header to the beginnning of the file.
+     * Should only be called once.
+     * Throws std::runtime_error is the write fails.
+     * 
+     * @param header_data The header data string 
+     */
     void write_header(const std::string& header_data) {
         if (write(fd, header_data.c_str(), header_data.size()) == -1) {
             throw std::runtime_error("Error: Unable to write header data to output file");
@@ -49,6 +62,12 @@ public:
     }
 };
 
+/**
+ * @brief Manages the data associated with a .ppm image through a file.
+ * 
+ * @tparam WIDTH the width in pixels of the image
+ * @tparam HEIGHT the height in pixel of the image
+ */
 template <unsigned long WIDTH, unsigned long HEIGHT>
 class ImageData {
 private:
@@ -61,6 +80,11 @@ private:
     FileDescriptor file_descriptor;
 
 public:
+    /**
+     * @brief Construct a new Image Data object
+     * 
+     * @param filename the filename of the image. must have path and .ppm extension already.
+     */
     ImageData(const std::string& filename) : file_descriptor {filename}
     {   
         //header data 
@@ -97,6 +121,13 @@ public:
         }
     }
     
+    /**
+     * @brief Writes the pixel data of the pixel at row row and column col to the file. 
+     * 
+     * @param row the row of the pixel, 0 indexed from the top
+     * @param col the column of the pixel, 0 indexed from the left
+     * @param pixel_data Must be of the form R + ' ' + G + ' ' + B + '\n'
+     */
     void write_pixel(int row, int col, const std::string& pixel_data) {
         assert(pixel_data.size() <= max_line_size && "pixel data too large");
         std::memcpy((*image_data_ptr)[static_cast<unsigned long>(row)][static_cast<unsigned long>(col)].data(),
