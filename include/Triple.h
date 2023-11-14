@@ -13,10 +13,9 @@
  */
 template <typename Derived> 
 class Triple {
-protected:
+public:
     std::array<float_type, 3> m_vec {};
 
-public:
     constexpr Triple() = default;
     constexpr Triple(float_type x, float_type y, float_type z) : m_vec {x, y, z} {}
 

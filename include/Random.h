@@ -31,6 +31,12 @@ namespace Random
 		std::uniform_real_distribution<float_type> distribution{ min, max };
 		return distribution(mt); // and then generate a random number from our global generator
 	}
+
+	// Generate a random int between [min, max]
+	inline int random_int(int min, int max) {
+		std::uniform_int_distribution<int> distribution{ min, max };
+		return distribution(mt); // and then generate a random number from our global generator
+	}
 };
 
 #endif

@@ -12,6 +12,7 @@
 #include "Material.h"
 #include "Random.h"
 #include "TimeFunction.h"
+#include "BVH.h"
 
 int main_(int argc, char *argv[]) {
     //process inputs to get filename
@@ -63,6 +64,9 @@ int main_(int argc, char *argv[]) {
 
     auto material3 = std::make_shared<Metal>(Color(.7, .6, .5), 0);
     world.add(std::make_shared<Sphere>(Vector3D(4, 1, 0), 1, material3));
+
+    //use Bounding Volume Heirarchy
+    world = HittableList{std::make_shared<BVH_node>(world)};
 
     //camera construction
     Camera camera {};

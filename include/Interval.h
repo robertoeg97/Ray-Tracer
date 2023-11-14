@@ -25,6 +25,16 @@ public:
     constexpr Interval(float_type min_, float_type max_) : min{min_}, max{max_} {}
 
     /**
+     * @brief Constructs a new Interval object that merges two existing Intervals.
+     * Any value that was a member of either of the two Intervals will be a part of the returned Interval.
+     * 
+     */
+    constexpr Interval(const Interval& first, const Interval& second) :
+        min (fmin(first.min, second.min)), 
+        max (fmax(first.max, second.max))
+    {}
+
+    /**
      * @brief Returns whether a value is contained within the interval (inclusive).
      * 
      * @param x the value in question
@@ -56,6 +66,26 @@ public:
         if (x < min) return min;
         if (x > max) return max;
         return x;
+    }
+
+    /**
+     * @brief returns the size of the Interval
+     * 
+     * @return float_type the difference between the max and min Interval values
+     */
+    float_type size() const {
+        return max - min;
+    }
+
+    /**
+     * @brief returns a new Interval that expands the old Interval outwards by some amount
+     * 
+     * @param delta the value to expand both ends of the Interval by
+     * @return Interval the expanded Interval
+     */
+    Interval expand(float_type delta) const {
+        float_type padding = delta / 2;
+        return Interval {min - padding, max + padding};
     }
 };
 

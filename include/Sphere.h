@@ -8,6 +8,7 @@
 #include "Ray3D.h"
 #include "Interval.h"
 #include "Material.h"
+#include "AABB.h"
 
 /**
  * @brief Represents a spherical object that can interact with light rays.
@@ -20,7 +21,36 @@ private:
     std::shared_ptr<Material> m_material_ptr;
     bool m_is_moving = false;
     Vector3D m_velocity {};
+    AABB m_bbox;
 
+    /**
+     * @brief returns an Axis Aligned Bounding Box completely surrounding a stationary Sphere.
+     * 
+     * @param center the center of the Sphere
+     * @param radius the radius of the Sphere
+     * @return AABB the bounding box
+     */
+    static AABB init_stationary_bbox(const Vector3D& center, float_type radius) {
+        Vector3D radius_vec {radius, radius, radius};
+        //two opposing corners of the box surrounding the sphere
+        return AABB{center - radius_vec, center + radius_vec};
+    }
+
+    /**
+     * @brief returns an Axis Aligned Bounding Box completely surrounding a moving Sphere.
+     * The box is ensured to surround the Sphere at any point along its linear trajectory.
+     * 
+     * @param center_begin the center of the Sphere at the initial time of the sphere's motion
+     * @param center_end the center of the Sphere at the end of the Sphere's motion
+     * @param radius the radius of the Sphere
+     * @return AABB the bounding box
+     */
+    static AABB init_moving_bbox(const Vector3D& center_begin, const Vector3D& center_end, float_type radius) {
+        Vector3D radius_vec {radius, radius, radius};
+        AABB bbox_begin {center_begin - radius_vec, center_begin + radius_vec};
+        AABB bbox_end {center_end - radius_vec, center_end + radius_vec};
+        return AABB{bbox_begin, bbox_end};
+    }
 
 public:
     /**
@@ -31,7 +61,11 @@ public:
      * @param material_ptr a pointer to the type of the sphere material
      */
     Sphere (const Vector3D& center, float_type radius, std::shared_ptr<Material> material_ptr) : 
-        m_center{center}, m_radius{radius}, m_material_ptr{material_ptr} {}
+        m_center{center}, 
+        m_radius{radius}, 
+        m_material_ptr{material_ptr}, 
+        m_bbox {init_stationary_bbox(center, radius)}
+    {}
 
     /**
      * @brief Construct a moving Sphere object
@@ -46,7 +80,8 @@ public:
         m_radius{radius}, 
         m_material_ptr{material_ptr}, 
         m_is_moving {true}, 
-        m_velocity {center_end - center_begin}
+        m_velocity {center_end - center_begin},
+        m_bbox {init_moving_bbox(center_begin, center_end, radius)}
     {}
 
     /**
@@ -92,6 +127,16 @@ public:
         rec.material_ptr = m_material_ptr;
 
         return rec;
+    }
+
+    /**
+     * @brief returns a bouuding box surrounding the Sphere.
+     * 
+     * @return AABB the bounding box that entirely contains the Sphere, 
+     * touching its radius at the center of all 8 faces.
+     */
+    AABB bounding_box() const override {
+        return m_bbox;
     }
 
 private:

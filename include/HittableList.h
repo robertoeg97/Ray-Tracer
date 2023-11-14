@@ -7,6 +7,7 @@
 #include "Hittable.h"
 #include "Ray3D.h"
 #include "Interval.h"
+#include "AABB.h"
 
 /**
  * @brief A class containing multiple possible Hittable objects.
@@ -17,11 +18,20 @@ public:
     std::vector<std::shared_ptr<Hittable>> hittables {};
 
     /**
-     * @brief Construct a new Hittable List object
+     * @brief Construct an empty Hittable List object
      * 
      */
     HittableList() = default;
     
+    /**
+     * @brief Construct a new HittableList object with one Hittable
+     * 
+     * @param hittable a shared_ptr to the single hittable object
+     */
+    HittableList(std::shared_ptr<Hittable> hittable) {
+        add(hittable);
+    }
+
     /**
      * @brief Empties out the HittablieList
      * 
@@ -31,10 +41,11 @@ public:
     /**
      * @brief Add one object to the HittableList
      * 
-     * @param object A shared_ptr to the Hittable object.
+     * @param hittable A shared_ptr to the Hittable object.
      */
-    void add(std::shared_ptr<Hittable> object) {
-        hittables.push_back(object);
+    void add(std::shared_ptr<Hittable> hittable) {
+        hittables.push_back(hittable);
+        bbox = AABB{bbox, hittable->bounding_box()};
     }
 
     /**
@@ -59,6 +70,18 @@ public:
 
         return hit_record;
     }
+
+    /**
+     * @brief returns the Axis Aligned Bounding Box that contains all hittables in the list.
+     * 
+     * @return AABB the bounding box
+     */
+    AABB bounding_box() const override {
+        return bbox;
+    }
+
+private:
+    AABB bbox;
 };
 
 

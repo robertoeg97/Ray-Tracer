@@ -6,6 +6,7 @@
 #include "Vector3D.h"
 #include "Ray3D.h"
 #include "Interval.h"
+#include "AABB.h"
 
 class Material;
 
@@ -21,7 +22,12 @@ struct HitRecord {
     bool front_face {};                             //true if the collision occured on the same side as the normal
     std::shared_ptr<Material> material_ptr {};      //a shared_ptr to the material that is collided with
 
-    HitRecord() = default;
+    /**
+     * @brief Construct a Hit Record object
+     * 
+     * @param is_hit_ whether or not the hit occured
+     */
+    HitRecord(bool is_hit_= false) : is_hit{is_hit_} {}
 
     /**
      * @brief Sets the unit_normal of the object to always point towards the intersecting ray. 
@@ -54,6 +60,8 @@ public:
      * @return HitRecord The resulting collision data.
      */
     virtual HitRecord hit(const Ray3D& ray, const Interval& t_interval) const = 0;
+
+    virtual AABB bounding_box() const = 0;
 };
 
 #endif
