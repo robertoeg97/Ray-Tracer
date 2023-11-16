@@ -37,7 +37,7 @@ cmake --build .
 
 ## Sample Image
 
-![Bunch of Spheres](/images/multiple_sphere_render.png)
+![Bunch of Spheres](/rendered_images/multiple_sphere_render.png)
 
 ## A Note on Performance
 

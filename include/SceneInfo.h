@@ -137,42 +137,47 @@ inline HittableList make_world<TwoSpheresScene>() {
 }
 
 
-/*struct ThreeSpheresScene {};
+//Scene Tag
+struct EarthScene {};
 
+/**
+ * @brief Defines the Camera parameters for EarthScene
+ * 
+ */
 template <>
-struct CameraParameters<ThreeSpheresScene> {
+struct CameraParameters<EarthScene> {
     constexpr static float_type aspect_ratio = 16.0/9.0;                                //desired image width to height ratio
     constexpr static int image_width = 400;                                             //in pixels
     constexpr static int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
-    constexpr static Vector3D camera_center {-2, 2, 1};                                 //the center of the camera
-    constexpr static Vector3D camera_target {0, 0, -1};                                  //where the camera is pointing   
+    constexpr static Vector3D camera_center {0, 0, 12};                                 //the center of the camera
+    constexpr static Vector3D camera_target {0, 0, 0};                                  //where the camera is pointing   
     constexpr static Vector3D camera_lens_direction = camera_target - camera_center;    //the direction that the camera lens is pointing
     constexpr static Vector3D camera_up_direction {0, 1, 0};                            //the direction that is "up" from the camera's perspective
     constexpr static float_type defocus_angle = 0;                                     //the degree of the cone tip with apex at the focus center 
                                                                                         //and base at the lens
     constexpr static float_type focus_distance = 1;                                    //units in the direction of the lens that images will be in focus
-    constexpr static float_type vfov = 90;                                              //degrees
+    constexpr static float_type vfov = 20;                                              //degrees
     constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr static int max_depth = 50;                                                //recursion limit
 };
 
+/**
+ * @brief Returns the world information for EarthScene
+ * 
+ * @return HittableList the world information
+ */
 template <>
-inline HittableList make_world<ThreeSpheresScene>() {
+inline HittableList make_world<EarthScene>() {
     HittableList world;
 
-    auto material_ground = std::make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
-    auto material_center = std::make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-    auto material_left   = std::make_shared<Dielectric>(1.5);
-    auto material_right  = std::make_shared<Metal>(Color(0.8, 0.6, 0.2), 0.0);
+    auto earth_texture = std::make_shared<ImageTexture>("earthmap.jpg");
+    auto earth_surface = std::make_shared<Lambertian>(earth_texture);
+    auto globe = std::make_shared<Sphere>(Vector3D{0, 0, 0}, 2, earth_surface);
 
-    world.add(make_shared<Sphere>(Vector3D( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(make_shared<Sphere>(Vector3D( 0.0,    0.0, -1.0),   0.5, material_center));
-    world.add(make_shared<Sphere>(Vector3D(-1.0,    0.0, -1.0),   0.5, material_left));
-    world.add(make_shared<Sphere>(Vector3D(-1.0,    0.0, -1.0),  -0.4, material_left));
-    world.add(make_shared<Sphere>(Vector3D( 1.0,    0.0, -1.0),   0.5, material_right));
+    world.add(globe);
 
     return world;
-}*/
+}
 
 
 #endif

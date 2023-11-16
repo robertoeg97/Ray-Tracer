@@ -33,4 +33,5 @@ endif ()
 
 target_include_directories(ray-tracer PRIVATE
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/external
 )

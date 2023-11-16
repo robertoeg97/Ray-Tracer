@@ -3,8 +3,10 @@
 
 #include <memory>
 #include "Constants.h"
+#include "Interval.h"
 #include "Color.h"
 #include "Vector3D.h"
+#include "rtw_stb_image.h"
 
 /**
  * @brief Describes the [0,1] u and v coordinates of a 2D texture.
@@ -127,6 +129,33 @@ private:
     float_type inv_scale;
     std::shared_ptr<Texture> even;
     std::shared_ptr<Texture> odd;
+};
+
+
+class ImageTexture : public Texture {
+public:
+    ImageTexture(const char* filename) : image{filename} {}
+
+    Color value(float_type u, float_type v, const Vector3D& position) const override {
+        //if we have no texture data, return solid cyan as a debugging aid
+        if (image.height() <= 0) return Color{0, 1, 1};
+
+        //clamp texture coordinates to [0, 1] x [1, 0]
+        u = Interval{0, 1}.clamp(u);
+        v = 1 - Interval{0, 1}.clamp(v);    //flip to image coordinates: 0 at top, 1 on bottom
+
+        //convert [0, 1] coordinates u,v to image pixels
+        auto i = static_cast<int>(u * image.width());
+        auto j = static_cast<int>(v * image.height());
+        auto pixel = image.pixel_data(i, j);
+
+        //scale 8 bit rgb values to [0, 1] for Color constructor
+        float_type color_scale = 1.0 / ColorConstants::max_pixel_val;
+        return Color{color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2]};
+    }
+
+private:
+    rtw_image image;
 };
 
 #endif
