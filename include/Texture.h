@@ -77,8 +77,8 @@ private:
 
 
 /**
- * @brief Describes a texture that two different textures, alternating betwen one and the other in a checkered pattern.
- * Which of the two textures is chosen is only dependant on the 3D position that the texture is located in space.
+ * @brief Describes a texture that contains two different textures, alternating betwen one and the other in a checkered pattern.
+ * Which of the two textures is chosen is only dependant on the 3D position that the texture is located in within the world.
  * 
  */
 class CheckerTexture : public Texture {
@@ -108,7 +108,7 @@ public:
     {}
 
     /**
-     * @brief Returns the Color of the solid color unit-plane-texture at point (u, v).
+     * @brief Returns the Color of the texture at point (u, v).
      * 
      * @param u the horizontal coordinate of the texture, where 0 is the leftmost point and 1 is the rightmost point.
      * @param v the vertical coordinate of the texture, where 0 is the bottommost point and 1 is the topmost point.
@@ -132,10 +132,28 @@ private:
 };
 
 
+/**
+ * @brief Describes a texture that maps to some 2D image file.
+ * 
+ */
 class ImageTexture : public Texture {
 public:
+    /**
+     * @brief Construct a new Image Texture object
+     * 
+     * @param filename The name of the file, with extension, that the texture will map to.
+     * The file must be located in the texture_images directory.
+     */
     ImageTexture(const char* filename) : image{filename} {}
 
+    /**
+     * @brief Returns the Color of the texture at point (u, v).
+     * 
+     * @param u the horizontal coordinate of the texture, where 0 is the leftmost point and 1 is the rightmost point.
+     * @param v the vertical coordinate of the texture, where 0 is the bottommost point and 1 is the topmost point.
+     * @param position The 3D point in space that the given (u, v) point on the texture will be mapped to. 
+     * @return Color of the point
+     */
     Color value(float_type u, float_type v, const Vector3D& position) const override {
         //if we have no texture data, return solid cyan as a debugging aid
         if (image.height() <= 0) return Color{0, 1, 1};
