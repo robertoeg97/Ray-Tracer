@@ -12,15 +12,16 @@
 #include "Sphere.h"
 #include "Material.h"
 #include "Random.h"
-#include "CameraParameters.h"
 #include "ImageData.h"
-
-using namespace CameraParams;
+#include "SceneInfo.h"
 
 /**
  * @brief A class representing a camera that can capture light from the world.
  * 
+ * @tparam Scene The type tag of the scene that will be drawn, provided to determine scene specific camera parameters.
+ * New scenes can be defined in SceneInfo.h
  */
+template <typename Scene>
 class Camera {
 private:
     //viewport info
@@ -40,25 +41,27 @@ public:
     Camera()
     {
         //viewport dimensions
-        float_type theta = degrees_to_radians(vfov);
-        float_type h = focus_distance * std::tan(theta/2);
+        float_type theta = degrees_to_radians(CameraParameters<Scene>::vfov);
+        float_type h = CameraParameters<Scene>::focus_distance * std::tan(theta/2);
         float_type viewport_height = 2 * h;
-        float_type viewport_width = viewport_height * (static_cast<float_type>(image_width)/image_height);
+        float_type viewport_width = viewport_height * (static_cast<float_type>(CameraParameters<Scene>::image_width)/CameraParameters<Scene>::image_height);
         //calculate the w,u,v basis vectors for the camera coordinate frame
-        w = -camera_lens_direction.unit_vector();       //negative direction of camera lens
-        u = camera_up_direction.cross(w).unit_vector(); //vector pointing right of camera
+        w = -CameraParameters<Scene>::camera_lens_direction.unit_vector();       //negative direction of camera lens
+        u = CameraParameters<Scene>::camera_up_direction.cross(w).unit_vector(); //vector pointing right of camera
         v = w.cross(u);                                 //vector pointing up
         //calculate vectors going right along the horizontal and down along the vertical viewport edges
         Vector3D viewport_u = viewport_width * u;
         Vector3D viewport_v = viewport_height * -v;
         //initilaize delta vectors (1 pixel long)
-        pixel_delta_u = viewport_u / image_width;
-        pixel_delta_v = viewport_v / image_height;
+        pixel_delta_u = viewport_u / CameraParameters<Scene>::image_width;
+        pixel_delta_v = viewport_v / CameraParameters<Scene>::image_height;
         //determine the location of the upper left pixel
-        Vector3D viewport_upper_left = camera_center - (focus_distance*w) - viewport_u/2 - viewport_v/2;
+        Vector3D viewport_upper_left    = CameraParameters<Scene>::camera_center 
+                                        - (CameraParameters<Scene>::focus_distance*w) 
+                                        - viewport_u/2 - viewport_v/2;
         pixel00_loc = viewport_upper_left + .5*(pixel_delta_u + pixel_delta_v);
         //calculate the camera defocus distance basis vectors
-        float_type defocus_radius = focus_distance * std::tan(degrees_to_radians(defocus_angle/2));
+        float_type defocus_radius = CameraParameters<Scene>::focus_distance * std::tan(degrees_to_radians(CameraParameters<Scene>::defocus_angle/2));
         defocus_disk_u = u * defocus_radius;
         defocus_disk_v = v * defocus_radius;
     }
@@ -71,8 +74,8 @@ public:
      * The file will be truncated if it already exists, or created if it doesn't.
      */
     void render(const Hittable& world, const std::string& filename) const {
-        ImageData<image_width, image_height> image_data{filename};
-        parallel_render_tile(0, image_height, 0, image_width, world, image_data);
+        ImageData<CameraParameters<Scene>::image_width, CameraParameters<Scene>::image_height> image_data{filename};
+        parallel_render_tile(0, CameraParameters<Scene>::image_height, 0, CameraParameters<Scene>::image_width, world, image_data);
     }
 
 private:   
@@ -87,16 +90,17 @@ private:
      * @param image_data the object where pixel data will be written to.
      */
     void render_tile(   int row_min, int row_max, int col_min, int col_max, 
-                        const Hittable& world, ImageData<image_width, image_height>& image_data) const
+                        const Hittable& world, 
+                        ImageData<CameraParameters<Scene>::image_width, CameraParameters<Scene>::image_height>& image_data) const
     {   
         for (int j = row_min; j < row_max; ++j) {
             for (int i = col_min; i < col_max; ++i) {
                 ColorSum sum_color_samples {0, 0, 0};    
-                for (int s = 0; s < samples_per_pixel; ++s) {
+                for (int s = 0; s < CameraParameters<Scene>::samples_per_pixel; ++s) {
                     Color color_sample = ray_color(get_ray_sample(i, j), world);
                     sum_color_samples += color_sample;
                 }
-                Color pixel_color = sum_color_samples.scale(samples_per_pixel);
+                Color pixel_color = sum_color_samples.scale(CameraParameters<Scene>::samples_per_pixel);
                 pixel_color.write_pixel(j, i, image_data);
             }
         }
@@ -113,7 +117,8 @@ private:
      * @param image_data the object where pixel data will be written to.
      */
     void parallel_render_tile(  int row_min, int row_max, int col_min, int col_max, 
-                                const Hittable& world, ImageData<image_width, image_height>& image_data) const
+                                const Hittable& world, 
+                                ImageData<CameraParameters<Scene>::image_width, CameraParameters<Scene>::image_height>& image_data) const
     {   
         //if the number of pixels is small enough, render them all on this thread
         constexpr int max_pixels_per_thread = 100;  //rougly 10x10 pixel grid
@@ -165,7 +170,7 @@ private:
     Vector3D defocus_disk_sample() const {
         //returns random point in the defocus disk
         Vector3D random_unit_disk_point = Vector3D::random_in_unit_disk();
-        return  camera_center + 
+        return  CameraParameters<Scene>::camera_center + 
                 (defocus_disk_u * random_unit_disk_point.x()) + 
                 (defocus_disk_v * random_unit_disk_point.y());
     }
@@ -180,7 +185,9 @@ private:
     Ray3D get_ray_sample(int i, int j) const {
         Vector3D pixel_center = pixel00_loc + i*pixel_delta_u + j*pixel_delta_v;
         Vector3D random_point_in_pixel = get_random_point_in_pixel(pixel_center);           //antialiasing
-        Vector3D ray_origin = (defocus_angle > 0) ? defocus_disk_sample() : camera_center;  //defocus
+        Vector3D ray_origin = (CameraParameters<Scene>::defocus_angle > 0)                  //defocus if applicable
+                                ? defocus_disk_sample() 
+                                : CameraParameters<Scene>::camera_center;  
         constexpr float_type start_time = 0;
         constexpr float_type end_time = 1;
         float_type ray_time = Random::random_float(start_time, end_time);
@@ -197,7 +204,7 @@ private:
      */
     Color ray_color(const Ray3D& pixel_ray, const Hittable& world, int depth = 0) const {
         //if we've exceeded the ray reflection limit, no more light is gathered
-        if (depth >= max_depth) {
+        if (depth >= CameraParameters<Scene>::max_depth) {
             return Color{0, 0, 0};
         }
 
@@ -217,6 +224,5 @@ private:
         return (1.0-a)*Color(1, 1, 1) + a*Color(.5, .7, 1);
     }
 };
-
 
 #endif

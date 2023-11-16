@@ -9,6 +9,7 @@
 #include "Interval.h"
 #include "Material.h"
 #include "AABB.h"
+#include "Texture.h"
 
 /**
  * @brief Represents a spherical object that can interact with light rays.
@@ -124,6 +125,9 @@ public:
         rec.point = ray.at(rec.t);
         Vector3D outward_unit_normal = (rec.point - m_center) / m_radius;
         rec.set_face_and_normal(ray, outward_unit_normal);
+        auto uv = get_unit_sphere_uv(outward_unit_normal);
+        rec.u = uv.u;
+        rec.v = uv.v;
         rec.material_ptr = m_material_ptr;
 
         return rec;
@@ -148,6 +152,24 @@ private:
      */
     Vector3D current_center(float_type time) const {
         return (m_is_moving) ? m_center + m_velocity * time : m_center;
+    }
+
+    /**
+     * @brief Get the unit sphere uv object
+     * 
+     * @param point A given point on the unit sphere, centered on the origin.
+     * @return UnitTexturePosition.u: returned value [0,1] of angle around the y-axis from x=-1.
+     * UnitTexturePosition.v: returned value [0,1] of angle around from y=-1 to y =+1
+     * 
+     * <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+     * <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+     * <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+     */
+    static UnitTexturePosition get_unit_sphere_uv(const Vector3D& point) {
+        auto theta = static_cast<float_type>(acos(-point.y()));
+        auto phi = static_cast<float_type>(atan2(-point.z(), point.x())) + pi;
+
+        return UnitTexturePosition{phi / (2*pi), theta / pi};
     }
 };
 

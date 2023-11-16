@@ -23,8 +23,8 @@ public:
     constexpr float_type y() const {return m_vec[1];}
     constexpr float_type z() const {return m_vec[2];}
 
-    constexpr float_type operator[](int i) const {return m_vec[i];}
-    constexpr float_type& operator[](int i) {return m_vec[i];}
+    constexpr float_type operator[](size_t i) const {return m_vec[i];}
+    constexpr float_type& operator[](size_t i) {return m_vec[i];}
 
     constexpr Derived operator-() const {return {-m_vec[0], -m_vec[1], -m_vec[2]};} 
 

@@ -31,7 +31,7 @@ public:
         //sort the elements so that they can be divided into two non-overloapping bounding boxes
         std::sort(hittable_vec.begin(), hittable_vec.end(), comparator);
 
-        auto num_elements = hittable_vec.size();
+        auto num_elements = static_cast<long>(hittable_vec.size());
         //base case 1
         if (num_elements == 1) {
             left = right = hittable_vec[0];

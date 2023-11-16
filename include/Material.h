@@ -1,10 +1,12 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
+#include <memory>
 #include "Constants.h"
 #include "Ray3D.h"
 #include "Hittable.h"
 #include "Color.h"
+#include "Texture.h"
 
 /**
  * @brief Data detailing what happens to light after a collision (a result of either refraction or reflection).
@@ -41,16 +43,23 @@ public:
  */
 class Lambertian : public Material { 
 private:
-    Color albedo;
+    std::shared_ptr<Texture> albedo;
 
 public:
     /**
-     * @brief Construct a new Lambertian object
+     * @brief Construct a new Lambertian object that scales the color of all light it refracts by some constant
      * 
-     * @param albedo_ the multiplicative factor that light colliding with this material will undergo
+     * @param scalar the RGB multiplicative factors that light colliding with this material will undergo
      */
-    Lambertian(const Color& albedo_) : albedo{albedo_} {}
+    Lambertian(const Color& scalar) : albedo{std::make_shared<SolidColorTexture>(scalar)} {}
     
+    /**
+     * @brief Construct a new Lambertian object whose surface maps to some texture 
+     * 
+     * @param texture_ptr the std::shared_ptr to some Texture. 
+     */
+    Lambertian(std::shared_ptr<Texture> texture_ptr) : albedo{texture_ptr} {}
+
     /**
      * @brief Returns information about how light scatters as a result of diffuse object collision.
      * 
@@ -68,7 +77,7 @@ public:
             scatter_direction = hit_record.unit_normal;
         }
         Ray3D scatter_ray {hit_record.point, scatter_direction, ray_in.time()};
-        return ScatterRecord{success, scatter_ray, albedo};
+        return ScatterRecord{success, scatter_ray, albedo->value(hit_record.u, hit_record.v, hit_record.point)};
     }
 };
 

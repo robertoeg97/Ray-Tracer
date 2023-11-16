@@ -19,6 +19,8 @@ struct HitRecord {
     Vector3D point {};                              //the point of collision
     Vector3D unit_normal {};                        //the unit normal of the surface at the point of collision
     float_type t {};                                //ray.origin + ray.direction*t is the point of collision
+    float_type u {};                                //texture surface coordinate
+    float_type v {};                                //texture surface coordinate
     bool front_face {};                             //true if the collision occured on the same side as the normal
     std::shared_ptr<Material> material_ptr {};      //a shared_ptr to the material that is collided with
 

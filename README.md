@@ -6,8 +6,6 @@ This project implements a ray tracer following the Ray Tracing in One Weekend bo
 
 This project relies on the mmap functionality to enable multithreading. As a result, it will not be compatible with non-Unix operating systems.
 
-The image that is generated is specified by the scene drawn in main.cpp
-
 ### Cloning
 
 1. In  a terminal, navigate to the directory where you would like to clone the project.

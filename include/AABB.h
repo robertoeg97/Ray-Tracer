@@ -82,7 +82,7 @@ public:
      * @return false otherwise
      */
     bool hit (const Ray3D& ray, Interval t_interval) const {
-        for (int i = 0; i < num_dimensions; ++i) {
+        for (size_t i = 0; i < num_dimensions; ++i) {
             auto invD = 1 / ray.direction()[i];
             auto origin_component = ray.origin()[i];
             
