@@ -2,6 +2,7 @@
 #define PERLIN_H
 
 #include <algorithm>
+#include <cmath>
 #include "Constants.h"
 #include "Random.h"
 #include "Vector3D.h"
@@ -58,6 +59,28 @@ public:
                     ];
 
         return trilinear_interpolation(sample_vecs, u, v, w);
+    }
+
+    /**
+     * @brief A modification of Perlin noise designed to introduce a turbulent effect to the generated noise pattern.
+     *  It enhances the visual complexity and realism of procedural textures and animations.
+     * 
+     * @param point A Vector3D point in space
+     * @param depth The number of frequencies of the point to include in the weighted sum.
+     * @return float_type the noise value from [0, 1]
+     */
+    float_type turbulence(Vector3D point, int depth = 7) const {
+        //weighted sum of the frequencies of point
+        float_type accum = 0;
+        float_type weight = 1;
+        for (int i = 0; i < depth; ++i) {
+            accum += weight*noise(point);
+            weight *= .5;
+            point *= 2;    
+        }
+        
+        //map value to [0, 1]
+        return fabs(accum);
     }
 
 private:   

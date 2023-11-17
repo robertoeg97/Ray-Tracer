@@ -200,7 +200,7 @@ public:
      * @return Color of the point
      */
     Color value(float_type u, float_type v, const Vector3D& position) const override {
-        auto noise_scalar = (1 + perlin_noise.noise(scale * position)) * .5;    //maps the [-1, 1] noise to [0, 1]
+        auto noise_scalar = perlin_noise.turbulence(position);
         return  noise_scalar * Color{1, 1, 1};
     }
 
