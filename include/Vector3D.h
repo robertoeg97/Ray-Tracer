@@ -15,7 +15,6 @@ class Vector3D : public Triple<Vector3D> {
 public:
     using Triple<Vector3D>::Triple;  //inherit base class constructors
 
-private:
     /**
      * @brief generates a random vector where each component had a value inbetweeen min and max.
      * 
@@ -42,7 +41,6 @@ private:
         }
     }
 
-public:
     /**
      * @brief Generates a random vector in the unit disk located in the plane z = 0.
      * 
