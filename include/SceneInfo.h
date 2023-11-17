@@ -16,7 +16,7 @@
 struct RandomSphereScene {};
 
 /**
- * @brief Defines the Camera parameters for RandomSphereScene
+ * @brief Defines the Camera parameters for the scene
  * 
  */
 template <>
@@ -37,7 +37,7 @@ struct CameraParameters<RandomSphereScene> {
 };
 
 /**
- * @brief Returns the world information for RandomSphereScene
+ * @brief Returns the world information for the scene
  * 
  * @return HittableList the world information
  */
@@ -99,7 +99,7 @@ inline HittableList make_world<RandomSphereScene>() {
 struct TwoSpheresScene {};
 
 /**
- * @brief Defines the Camera parameters for TwoSpheresScene
+ * @brief Defines the Camera parameters for the scene
  * 
  */
 template <>
@@ -120,7 +120,7 @@ struct CameraParameters<TwoSpheresScene> {
 };
 
 /**
- * @brief Returns the world information for TwoSpheresScene
+ * @brief Returns the world information for the scene
  * 
  * @return HittableList the world information
  */
@@ -141,7 +141,7 @@ inline HittableList make_world<TwoSpheresScene>() {
 struct EarthScene {};
 
 /**
- * @brief Defines the Camera parameters for EarthScene
+ * @brief Defines the Camera parameters for the scene
  * 
  */
 template <>
@@ -162,7 +162,7 @@ struct CameraParameters<EarthScene> {
 };
 
 /**
- * @brief Returns the world information for EarthScene
+ * @brief Returns the world information for the scene
  * 
  * @return HittableList the world information
  */
@@ -175,6 +175,47 @@ inline HittableList make_world<EarthScene>() {
     auto globe = std::make_shared<Sphere>(Vector3D{0, 0, 0}, 2, earth_surface);
 
     world.add(globe);
+
+    return world;
+}
+
+
+//Scene Tag
+struct TwoPerlinSpheresScene {};
+
+/**
+ * @brief Defines the Camera parameters for the scene
+ * 
+ */
+template <>
+struct CameraParameters<TwoPerlinSpheresScene> {
+    constexpr static float_type aspect_ratio = 16.0/9.0;                                //desired image width to height ratio
+    constexpr static int image_width = 400;                                             //in pixels
+    constexpr static int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
+    constexpr static Vector3D camera_center {13, 2, 3};                                 //the center of the camera
+    constexpr static Vector3D camera_target {0, 0, 0};                                  //where the camera is pointing   
+    constexpr static Vector3D camera_lens_direction = camera_target - camera_center;    //the direction that the camera lens is pointing
+    constexpr static Vector3D camera_up_direction {0, 1, 0};                            //the direction that is "up" from the camera's perspective
+    constexpr static float_type defocus_angle = 0;                                     //the degree of the cone tip with apex at the focus center 
+                                                                                        //and base at the lens
+    constexpr static float_type focus_distance = 1;                                    //units in the direction of the lens that images will be in focus
+    constexpr static float_type vfov = 20;                                              //degrees
+    constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
+    constexpr static int max_depth = 50;                                                //recursion limit
+};
+
+/**
+ * @brief Returns the world information for the scene
+ * 
+ * @return HittableList the world information
+ */
+template <>
+inline HittableList make_world<TwoPerlinSpheresScene>() {
+    HittableList world;
+
+    auto perlin_texture = std::make_shared<NoiseTexture>();
+    world.add(std::make_shared<Sphere>(Vector3D{0, -1000, 0}, 1000, std::make_shared<Lambertian>(perlin_texture)));
+    world.add(std::make_shared<Sphere>(Vector3D{0, 2, 0}, 2, std::make_shared<Lambertian>(perlin_texture)));
 
     return world;
 }

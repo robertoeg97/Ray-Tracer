@@ -7,6 +7,7 @@
 #include "Color.h"
 #include "Vector3D.h"
 #include "rtw_stb_image.h"
+#include "Perlin.h"
 
 /**
  * @brief Describes the [0,1] u and v coordinates of a 2D texture.
@@ -175,5 +176,30 @@ public:
 private:
     rtw_image image;
 };
+
+/**
+ * @brief Describes a texture via Perlin noise.
+ * 
+ */
+class NoiseTexture : public Texture {
+public:
+    NoiseTexture() = default;
+
+    /**
+     * @brief Returns the Color of the texture at point (u, v).
+     * 
+     * @param u the horizontal coordinate of the texture, where 0 is the leftmost point and 1 is the rightmost point.
+     * @param v the vertical coordinate of the texture, where 0 is the bottommost point and 1 is the topmost point.
+     * @param position The 3D point in space that the given (u, v) point on the texture will be mapped to. 
+     * @return Color of the point
+     */
+    Color value(float_type u, float_type v, const Vector3D& position) const override {
+        return perlin_noise.noise(position) * Color{1, 1, 1};
+    }
+
+private:
+    Perlin perlin_noise {};
+};
+
 
 #endif
