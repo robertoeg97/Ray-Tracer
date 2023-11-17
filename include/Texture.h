@@ -192,7 +192,7 @@ public:
     NoiseTexture(float_type scale_ = 1) : scale{scale_} {}
 
     /**
-     * @brief Returns the Color of the texture at point (u, v).
+     * @brief Returns the Color of the noisy texture at point (u, v).
      * 
      * @param u the horizontal coordinate of the texture, where 0 is the leftmost point and 1 is the rightmost point.
      * @param v the vertical coordinate of the texture, where 0 is the bottommost point and 1 is the topmost point.
@@ -200,8 +200,10 @@ public:
      * @return Color of the point
      */
     Color value(float_type u, float_type v, const Vector3D& position) const override {
-        auto noise_scalar = perlin_noise.turbulence(position);
-        return  noise_scalar * Color{1, 1, 1};
+        auto scaled_pos = position * scale;
+        //turbulence to control the phase of a sine function for undulating stripes
+        constexpr int turb_scale = 10;
+        return Color{1, 1, 1} * .5 * (1 + sin(scaled_pos.z() + turb_scale * perlin_noise.turbulence(scaled_pos)));
     }
 
 private:
