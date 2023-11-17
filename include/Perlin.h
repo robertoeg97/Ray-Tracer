@@ -40,6 +40,10 @@ public:
         auto u = point.x() - floor(point.x());
         auto v = point.y() - floor(point.y());
         auto w = point.z() - floor(point.z());
+        //Hermite cubic to remove Mach bands
+        u = u*u*(3-2*u);
+        v = v*v*(3-2*v);
+        w = w*w*(3-2*w);
 
         auto i = static_cast<int>(floor(point.x()));
         auto j = static_cast<int>(floor(point.y()));
