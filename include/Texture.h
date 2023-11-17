@@ -183,7 +183,13 @@ private:
  */
 class NoiseTexture : public Texture {
 public:
-    NoiseTexture() = default;
+    /**
+     * @brief Construct a new Noise Texture object
+     * 
+     * @param scale_ the rate of change of the noise.
+     * A higher value means that the texture will have less smooth black-white transitions.
+     */
+    NoiseTexture(float_type scale_ = 1) : scale{scale_} {}
 
     /**
      * @brief Returns the Color of the texture at point (u, v).
@@ -194,11 +200,12 @@ public:
      * @return Color of the point
      */
     Color value(float_type u, float_type v, const Vector3D& position) const override {
-        return perlin_noise.noise(position) * Color{1, 1, 1};
+        return perlin_noise.noise(scale * position) * Color{1, 1, 1};
     }
 
 private:
     Perlin perlin_noise {};
+    float_type scale;
 };
 
 
