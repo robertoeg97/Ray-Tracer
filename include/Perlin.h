@@ -31,24 +31,49 @@ public:
     }
 
     /**
-     * @brief Uses a Vector3D point to output a noise sample.
+     * @brief Generates Perlin noise sample using a Vector3D point in space as a hash.
      * 
-     * @param point A point in space.
-     * @return float_type a random float value
+     * @param point A Vector3D point in space
+     * @return float_type the noise value
      */
-    float_type noise(const Vector3D point) const {
-        constexpr int scale = 4;            //higher value results in larger "blocks" of noise
-        constexpr unsigned int mask = 255;  //bottom 8 LSB
-        auto i = static_cast<unsigned int>(scale*point.x()) & mask;
-        auto j = static_cast<unsigned int>(scale*point.y()) & mask;
-        auto k = static_cast<unsigned int>(scale*point.z()) & mask;
+    float_type noise(const Vector3D& point) const {
+        auto u = point.x() - floor(point.x());
+        auto v = point.y() - floor(point.y());
+        auto w = point.z() - floor(point.z());
 
-        //use point coordinates to hash into the random floats
-        return random_floats[perm_x[i] ^ perm_y[j] ^ perm_z[k]];
+        auto i = static_cast<int>(floor(point.x()));
+        auto j = static_cast<int>(floor(point.y()));
+        auto k = static_cast<int>(floor(point.z()));
+
+        float_type sample_vals[2][2][2];
+
+        for (int di=0; di < 2; di++)
+            for (int dj=0; dj < 2; dj++)
+                for (int dk=0; dk < 2; dk++)
+                    sample_vals[di][dj][dk] = random_floats[
+                        perm_x[(i+di) & 255] ^
+                        perm_y[(j+dj) & 255] ^
+                        perm_z[(k+dk) & 255]
+                    ];
+
+        return trilinear_interpolation(sample_vals, u, v, w);
     }
 
 private:
-    constexpr static int point_count = 256;
+    static float_type trilinear_interpolation ( float_type sample_vals[2][2][2], 
+                                                float_type u, float_type v, float_type w) {
+        auto accum = 0.0;
+        for (int i=0; i < 2; i++)
+            for (int j=0; j < 2; j++)
+                for (int k=0; k < 2; k++)
+                    accum += (i*u + (1-i)*(1-u))*
+                            (j*v + (1-j)*(1-v))*
+                            (k*w + (1-k)*(1-w))*sample_vals[i][j][k];
+
+        return accum;
+    }
+
+    constexpr static unsigned int point_count = 256;
     std::array<float_type, point_count> random_floats;
     std::array<int, point_count> perm_x;
     std::array<int, point_count> perm_y;
