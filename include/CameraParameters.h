@@ -3,6 +3,7 @@
 
 #include "Constants.h"
 #include "Vector3D.h"
+#include "Color.h"
 
 /**
  * @brief Calculate the image height in pixels
@@ -34,6 +35,8 @@ struct CameraParameters {
     constexpr static float_type vfov = 20;                                              //degrees
     constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0.70, 0.80, 1.00};
 };
 
 

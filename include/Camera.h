@@ -205,23 +205,23 @@ private:
     Color ray_color(const Ray3D& pixel_ray, const Hittable& world, int depth = 0) const {
         //if we've exceeded the ray reflection limit, no more light is gathered
         if (depth >= CameraParameters<Scene>::max_depth) {
-            return Color{0, 0, 0};
+            return CameraParameters<Scene>::background;
         }
 
         constexpr float_type min_travel_distance = 0.001;  //avoid shadow acne
         HitRecord hit_record = world.hit(pixel_ray, Interval(min_travel_distance, infinity));
         if (hit_record.is_hit) { 
             ScatterRecord scatter_record = hit_record.material_ptr->scatter(pixel_ray, hit_record);  
-            if (scatter_record.success) {
-                return scatter_record.attenuation * ray_color(scatter_record.ray_out, world, depth+1);
-            }                                
-            return Color(0, 0, 0); //failed scatter
+            Color emitted_color = hit_record.material_ptr->emitted(hit_record.u, hit_record.v, hit_record.point); 
+            //failed scatter means purely emission    
+            Color scattered_color = (scatter_record.success) 
+                                  ? scatter_record.attenuation * ray_color(scatter_record.ray_out, world, depth+1)  
+                                  : Color {0, 0, 0};                             
+            return emitted_color + scattered_color;
         }
 
-        //background coloring logic
-        Vector3D unit_direction = pixel_ray.direction().unit_vector();
-        float_type a = .5 * (unit_direction.y() + 1.0);
-        return (1.0-a)*Color(1, 1, 1) + a*Color(.5, .7, 1);
+        //failed to hit anything
+        return CameraParameters<Scene>::background;
     }
 };
 

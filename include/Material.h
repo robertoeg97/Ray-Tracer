@@ -35,6 +35,20 @@ public:
      * @return ScatterRecord detailing how the light behaves after the collision 
      */
     virtual ScatterRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const = 0;
+
+    /**
+     * @brief Returns the Color emitted by the material, specified by a light-emitting material's Texture.
+     * By default, Materials will emit nothing (black).
+     * This behavior will be overridden by light-emitting materials.
+     * 
+     * @param u the horizontal coordinate of the texture, where 0 is the leftmost point and 1 is the rightmost point.
+     * @param v the vertical coordinate of the texture, where 0 is the bottommost point and 1 is the topmost point.
+     * @param position The position in spance that the ray intersects with the Material.
+     * @return Color The emitted color
+     */
+    virtual Color emitted(float_type u, float_type v, const Vector3D& position) const {
+        return Color{0, 0, 0};
+    }
 };
 
 /**
@@ -95,7 +109,7 @@ public:
      * @brief Construct a new Metal object
      * 
      * @param albedo_ the multiplicative factor that light colliding with this material will ungergo
-     * @param fuzz_ The "degree of randomness" that the reflected light direction =will have.
+     * @param fuzz_ The "degree of randomness" that the reflected light direction will have.
      * Resulting light will have its direction offset by a sphere of radius fuzz.
      */
     Metal(const Color& albedo_, float_type fuzz_) : albedo{albedo_}, fuzz{fuzz_ <= 1 ? fuzz_ : 1} {}
@@ -166,6 +180,54 @@ public:
         Ray3D refracted_ray {hit_record.point, refracted_direction, ray_in.time()};
         return ScatterRecord{success, refracted_ray, attenuation};  
     }
+};
+
+/**
+ * @brief A light emitting material, whose light pattern is determined by a shared_ptr<Texture>.
+ * 
+ */
+class DiffuseLights : public Material {
+public:
+    /**
+     * @brief Construct a new Diffuse Lights object
+     * 
+     * @param emit_ the Texture whose color the light will emit.
+     */
+    DiffuseLights(std::shared_ptr<Texture> emit_) : emit{emit_} {}
+
+    /**
+     * @brief Construct a new Diffuse Lights object
+     * 
+     * @param color A color that the light will uniformly emit.
+     */
+    DiffuseLights(Color color) : emit{std::make_shared<SolidColorTexture>(color)} {}
+
+    /**
+     * @brief Returns information about how light scatters with the Material.
+     * For diffuse lights, there is never scattering.
+     * 
+     * @param ray_in The incoming light ray.
+     * @param hit_record The information about where a light ray collided with a surface, and what the surface was.
+     * @return ScatterRecord detailing how the light behaves after the collision 
+     */
+    ScatterRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const override {
+        return ScatterRecord{}; //failed scatter
+    }
+
+    /**
+     * @brief Returns the Color emitted by the Diffuse Lights, specified by the emit Texture.
+     * 
+     * @param u the horizontal coordinate of the texture, where 0 is the leftmost point and 1 is the rightmost point.
+     * @param v the vertical coordinate of the texture, where 0 is the bottommost point and 1 is the topmost point.
+     * @param position The position in spance that the ray intersects with the Material.
+     * @return Color The emitted color
+     */
+    Color emitted(float_type u, float_type v, const Vector3D& position) const override {
+        return emit->value(u, v, position);
+    }
+
+private:    
+    std::shared_ptr<Texture> emit;
 };
 
 

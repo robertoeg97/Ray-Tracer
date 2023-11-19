@@ -192,7 +192,7 @@ Added Turbulence: Weighted sum of multiple frequencies of the hash
 ![Perlin Turbulence](rendered_images/pngs/perlin_turbulence.png)
 
 
-Added Marbled texture using the Perlin noise
+Added striped texture using the Perlin noise
 
 ![Undulating Perlin Ball](rendered_images/pngs/undulating_perlin_ball.png)
 
@@ -200,3 +200,13 @@ Added Marbled texture using the Perlin noise
 Added Ability to Render Second Geometric Primitive: Parallelograms
 
 ![Simple Quadrilaterals](rendered_images/pngs/quadrilaterals.png)
+
+
+Added Light Emitting Material
+
+![Single Light Source](rendered_images/pngs/simple_quad_light.png)
+
+
+Two Light Sources
+
+![Dual Light Sources](rendered_images/pngs/simple_dual_lights.png)

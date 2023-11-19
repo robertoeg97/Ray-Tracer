@@ -35,6 +35,8 @@ struct CameraParameters<RandomSphereScene> {
     constexpr static float_type vfov = 20;                                              //degrees
     constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0.70, 0.80, 1.00};
 };
 
 /**
@@ -96,6 +98,7 @@ inline HittableList make_world<RandomSphereScene>() {
 }
 
 
+
 //Scene Tag
 struct TwoSpheresScene {};
 
@@ -118,6 +121,8 @@ struct CameraParameters<TwoSpheresScene> {
     constexpr static float_type vfov = 20;                                              //degrees
     constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0.70, 0.80, 1.00};
 };
 
 /**
@@ -136,6 +141,7 @@ inline HittableList make_world<TwoSpheresScene>() {
 
     return world;
 }
+
 
 
 //Scene Tag
@@ -160,6 +166,8 @@ struct CameraParameters<EarthScene> {
     constexpr static float_type vfov = 20;                                              //degrees
     constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0.70, 0.80, 1.00};
 };
 
 /**
@@ -179,6 +187,7 @@ inline HittableList make_world<EarthScene>() {
 
     return world;
 }
+
 
 
 //Scene Tag
@@ -203,6 +212,8 @@ struct CameraParameters<TwoPerlinSpheresScene> {
     constexpr static float_type vfov = 20;                                              //degrees
     constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0.70, 0.80, 1.00};
 };
 
 /**
@@ -222,15 +233,16 @@ inline HittableList make_world<TwoPerlinSpheresScene>() {
 }
 
 
+
 //Scene Tag
-struct Quadrilaterals {};
+struct QuadrilateralsScene {};
 
 /**
  * @brief Defines the Camera parameters for the scene
  * 
  */
 template <>
-struct CameraParameters<Quadrilaterals> {
+struct CameraParameters<QuadrilateralsScene> {
     constexpr static float_type aspect_ratio = 1;                                //desired image width to height ratio
     constexpr static int image_width = 400;                                             //in pixels
     constexpr static int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
@@ -244,6 +256,8 @@ struct CameraParameters<Quadrilaterals> {
     constexpr static float_type vfov = 80;                                              //degrees
     constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
     constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0.70, 0.80, 1.00};
 };
 
 /**
@@ -252,7 +266,7 @@ struct CameraParameters<Quadrilaterals> {
  * @return HittableList the world information
  */
 template <>
-inline HittableList make_world<Quadrilaterals>() {
+inline HittableList make_world<QuadrilateralsScene>() {
     HittableList world;
 
     // Materials
@@ -271,5 +285,55 @@ inline HittableList make_world<Quadrilaterals>() {
 
     return world;
 }
+
+
+
+//Scene Tag
+struct SimpleLightScene {};
+
+/**
+ * @brief Defines the Camera parameters for the scene
+ * 
+ */
+template <>
+struct CameraParameters<SimpleLightScene> {
+    constexpr static float_type aspect_ratio = 16.0/9.0;                                //desired image width to height ratio
+    constexpr static int image_width = 400;                                             //in pixels
+    constexpr static int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
+    constexpr static Vector3D camera_center {26, 3, 6};                                 //the center of the camera
+    constexpr static Vector3D camera_target {0, 2, 0};                                  //where the camera is pointing   
+    constexpr static Vector3D camera_lens_direction = camera_target - camera_center;    //the direction that the camera lens is pointing
+    constexpr static Vector3D camera_up_direction {0, 1, 0};                            //the direction that is "up" from the camera's perspective
+    constexpr static float_type defocus_angle = 0;                                     //the degree of the cone tip with apex at the focus center 
+                                                                                        //and base at the lens
+    constexpr static float_type focus_distance = 1;                                    //units in the direction of the lens that images will be in focus
+    constexpr static float_type vfov = 20;                                              //degrees
+    constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
+    constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0, 0, 0};
+};
+
+
+/**
+ * @brief Returns the world information for the scene
+ * 
+ * @return HittableList the world information
+ */
+template <>
+inline HittableList make_world<SimpleLightScene>() {
+    HittableList world;
+
+    auto noise = std::make_shared<NoiseTexture>(4);
+    world.add(std::make_shared<Sphere>(Vector3D{0, -1000, 0}, 1000, std::make_shared<Lambertian>(noise)));
+    world.add(std::make_shared<Sphere>(Vector3D{0, 2, 0}, 2, std::make_shared<Lambertian>(noise)));
+
+    auto white_light = std::make_shared<DiffuseLights>(Color{4, 4, 4});   //color magnitude > 1 means color can more easily light up surroundings
+    world.add(std::make_shared<Quad>(Vector3D{3, 1, -2}, Vector3D{2, 0, 0}, Vector3D{0, 2, 0}, white_light));
+    world.add(std::make_shared<Sphere>(Vector3D{0,7,0}, 2, white_light));
+
+    return world;
+}
+
 
 #endif
