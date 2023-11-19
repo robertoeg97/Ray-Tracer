@@ -58,11 +58,16 @@ public:
      * 
      * @param ray The incoming light ray.
      * @param t_interval The interval of time units that will result in a valid collision.
-     * Everything on or outside of this range is considered na non-successful collision.
+     * Everything on or outside of this range is considered a non-successful collision.
      * @return HitRecord The resulting collision data.
      */
     virtual HitRecord hit(const Ray3D& ray, const Interval& t_interval) const = 0;
 
+    /**
+     * @brief returns a bouuding box surrounding the Hittable.
+     * 
+     * @return AABB the bounding box that entirely contains the Hittable.
+     */
     virtual AABB bounding_box() const = 0;
 };
 

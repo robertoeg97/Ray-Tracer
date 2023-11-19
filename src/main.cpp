@@ -8,7 +8,7 @@
 #include "BVH.h"
 
 //Scene Tag: defined in SceneInfo.h
-using Scene = TwoPerlinSpheresScene;
+using Scene = Quadrilaterals;
 
 /**
  * @brief renders the scene Scene and writes the .ppm file information to filename

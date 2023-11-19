@@ -6,6 +6,7 @@
 #include "Vector3D.h"
 #include "HittableList.h"
 #include "Sphere.h" 
+#include "Quad.h"
 #include "Material.h"
 #include "Random.h"
 #include "Texture.h"
@@ -220,5 +221,55 @@ inline HittableList make_world<TwoPerlinSpheresScene>() {
     return world;
 }
 
+
+//Scene Tag
+struct Quadrilaterals {};
+
+/**
+ * @brief Defines the Camera parameters for the scene
+ * 
+ */
+template <>
+struct CameraParameters<Quadrilaterals> {
+    constexpr static float_type aspect_ratio = 1;                                //desired image width to height ratio
+    constexpr static int image_width = 400;                                             //in pixels
+    constexpr static int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
+    constexpr static Vector3D camera_center {0, 0, 9};                                 //the center of the camera
+    constexpr static Vector3D camera_target {0, 0, 0};                                  //where the camera is pointing   
+    constexpr static Vector3D camera_lens_direction = camera_target - camera_center;    //the direction that the camera lens is pointing
+    constexpr static Vector3D camera_up_direction {0, 1, 0};                            //the direction that is "up" from the camera's perspective
+    constexpr static float_type defocus_angle = 0;                                     //the degree of the cone tip with apex at the focus center 
+                                                                                        //and base at the lens
+    constexpr static float_type focus_distance = 1;                                    //units in the direction of the lens that images will be in focus
+    constexpr static float_type vfov = 80;                                              //degrees
+    constexpr static int samples_per_pixel = 100;                                       //provides antialiasing
+    constexpr static int max_depth = 50;                                                //recursion limit
+};
+
+/**
+ * @brief Returns the world information for the scene
+ * 
+ * @return HittableList the world information
+ */
+template <>
+inline HittableList make_world<Quadrilaterals>() {
+    HittableList world;
+
+    // Materials
+    auto left_red     = std::make_shared<Lambertian>(Color(1.0, 0.2, 0.2));
+    auto back_green   = std::make_shared<Lambertian>(Color(0.2, 1.0, 0.2));
+    auto right_blue   = std::make_shared<Lambertian>(Color(0.2, 0.2, 1.0));
+    auto upper_orange = std::make_shared<Lambertian>(Color(1.0, 0.5, 0.0));
+    auto lower_teal   = std::make_shared<Lambertian>(Color(0.2, 0.8, 0.8));
+
+    // Quadrilaterals
+    world.add(std::make_shared<Quad>(Vector3D(-3,-2, 5), Vector3D(0, 0,-4), Vector3D(0, 4, 0), left_red));
+    world.add(std::make_shared<Quad>(Vector3D(-2,-2, 0), Vector3D(4, 0, 0), Vector3D(0, 4, 0), back_green));
+    world.add(std::make_shared<Quad>(Vector3D( 3,-2, 1), Vector3D(0, 0, 4), Vector3D(0, 4, 0), right_blue));
+    world.add(std::make_shared<Quad>(Vector3D(-2, 3, 1), Vector3D(4, 0, 0), Vector3D(0, 0, 4), upper_orange));
+    world.add(std::make_shared<Quad>(Vector3D(-2,-3, 5), Vector3D(4, 0, 0), Vector3D(0, 0,-4), lower_teal));
+
+    return world;
+}
 
 #endif

@@ -102,6 +102,22 @@ public:
 
         return true;
     }
+
+    /**
+     * @brief Returns an AABB similar to the current object that has no side narrower than delta, 
+     * padding any sides necessary evenly in the + and - directions.
+     * 
+     * @param delta the minimum side length of the returned AABB. If any side is < delta, 
+     * the new side length will be upper bounded by 2*delta.
+     * @return AABB that has all sides > delta and maintains the current object's side's center
+     */
+    AABB pad(float_type delta) const {
+        auto new_x = (x.size() < delta) ? x.expand(delta) : x;
+        auto new_y = (y.size() < delta) ? y.expand(delta) : y;
+        auto new_z = (z.size() < delta) ? z.expand(delta) : z;
+
+        return AABB{new_x, new_y, new_z};
+    }
 };
 
 #endif
