@@ -9,7 +9,7 @@
 #include "Constants.h"
 
 /**
- * @brief color is represented by a 3D vector of floating-point types from 0.0 to 1.0
+ * @brief color is represented by a 3D vector of floating-point types representing RGB component values
  * 
  */
 class Color : public Triple<Color> {

@@ -210,3 +210,8 @@ Added Light Emitting Material
 Two Light Sources
 
 ![Dual Light Sources](rendered_images/pngs/simple_dual_lights.png)
+
+
+Cornell Box Scene
+
+![Cornell Box](rendered_images/pngs/cornell_box.png)
