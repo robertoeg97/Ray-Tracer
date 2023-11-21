@@ -215,3 +215,8 @@ Two Light Sources
 Cornell Box Scene
 
 ![Cornell Box](rendered_images/pngs/cornell_box.png)
+
+
+Implemented generic Box out of Quad primitives
+
+![Cornell Box with Boxes](rendered_images/pngs/cornell_box_with_boxes.png)
