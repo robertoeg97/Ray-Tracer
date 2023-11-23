@@ -23,6 +23,7 @@ public:
      * 
      * @param origin a Vector3D object representing the initial point in space of the light ray.
      * @param direction a Vector3D object representing the direction that the ray travels out of the origin.
+     * @param time the time that the ray is currently at
      */
     Ray3D(const Vector3D& origin, const Vector3D& direction, float_type time = 0) : 
         m_origin{origin}, 

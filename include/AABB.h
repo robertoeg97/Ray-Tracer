@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <cassert>
+#include "Constants.h"
 #include "Vector3D.h"
 #include "Ray3D.h"
 #include "Interval.h"
@@ -119,5 +120,27 @@ public:
         return AABB{new_x, new_y, new_z};
     }
 };
+
+/**
+ * @brief Adds some offset vector to an Axis Aligned Bouding Box (AABB).
+ * 
+ * @param aabb the AABB
+ * @param offset the offset vector
+ * @return AABB the resulting bounding box with some displacement
+ */
+AABB operator+(const AABB& aabb, const Vector3D& offset) {
+    return AABB{aabb.x + offset.x(), aabb.y + offset.y(), aabb.z + offset.z()};
+}
+
+/**
+ * @brief Adds some offset vector to an Axis Aligned Bouding Box (AABB).
+ * 
+ * @param offset the offset vector
+ * @param aabb the AABB
+ * @return AABB the resulting bounding box with some displacement
+ */
+AABB operator+(const Vector3D& offset, const AABB& aabb) {
+    return AABB{aabb.x + offset.x(), aabb.y + offset.y(), aabb.z + offset.z()};
+}
 
 #endif

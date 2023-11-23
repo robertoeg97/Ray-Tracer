@@ -92,4 +92,26 @@ public:
 const Interval Interval::empty {+infinity, -infinity};
 const Interval Interval::universe {-infinity, +infinity};
 
+/**
+ * @brief Shifts both ends of an Interval by some amount.
+ * 
+ * @param interval the Interval to move
+ * @param displacement the amount to shift the Interval by
+ * @return Interval the resulting displaced Interval
+ */
+Interval operator+(const Interval& interval, float_type displacement) {
+    return Interval{interval.min + displacement, interval.max+displacement};
+}
+
+/**
+ * @brief Shifts both ends of an Interval by some amount.
+ * 
+ * @param displacement the amount to shift the Interval by
+ * @param interval the Interval to move
+ * @return Interval the resulting displaced Interval
+ */
+Interval operator+(float_type displacement, const Interval& interval) {
+    return Interval{interval.min + displacement, interval.max+displacement};
+}
+
 #endif
