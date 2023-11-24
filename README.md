@@ -220,3 +220,8 @@ Cornell Box Scene
 Implemented generic Box out of Quad primitives
 
 ![Cornell Box with Boxes](rendered_images/pngs/cornell_box_with_boxes.png)
+
+
+Implemented Classes for Arbitrary Rotation and Translation of Objects
+
+![Boxes with Translation and Rotation](rendered_images/pngs/boxes_w_translation_rotation.png)

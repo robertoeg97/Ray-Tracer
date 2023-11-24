@@ -13,6 +13,8 @@
 #include "MakeWorld.h"
 #include "CameraParameters.h"
 #include "Box.h"
+#include "RotateY.h"
+#include "Translate.h"
 
 //Scene Tag
 struct RandomSphereScene {};
@@ -386,8 +388,15 @@ inline HittableList make_world<CornellBoxScene>() {
     world.add(std::make_shared<Quad>(Vector3D{555, 555, 555}, Vector3D{-555, 0, 0}, Vector3D{0, 0, -555}, white));
     world.add(std::make_shared<Quad>(Vector3D{0, 0, 555}, Vector3D{555, 0, 0}, Vector3D{0, 555, 0}, white));
 
-    world.add(box(Vector3D{130, 0, 65}, Vector3D{295, 165, 230}, white));
-    world.add(box(Vector3D{265, 0, 295}, Vector3D{430, 330, 460}, white));
+    std::shared_ptr<Hittable> box1 = box(Vector3D{0, 0, 0}, Vector3D{165, 330, 165}, white);
+    box1 = std::make_shared<RotateY>(box1, 15);
+    box1 = std::make_shared<Translate>(box1, Vector3D{265, 0, 295});
+    world.add(box1);
+
+    std::shared_ptr<Hittable> box2 = box(Vector3D{0, 0, 0}, Vector3D{165, 165, 165}, white);
+    box2 = std::make_shared<RotateY>(box2, -18);
+    box2 = std::make_shared<Translate>(box2, Vector3D{130, 0, 65});
+    world.add(box2);
 
     return world;
 }
