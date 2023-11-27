@@ -231,4 +231,44 @@ private:
 };
 
 
+/**
+ * @brief An isotropic material scatters ligt uniformly in all directions.
+ * 
+ */
+class Isotropic : public Material {
+public:
+    /**
+     * @brief Construct a new Isotropic object
+     * 
+     * @param color the Color that will be used to uniformly attenuate any light ray that is scattered by the material.
+     */
+    Isotropic(Color color) : albedo {std::make_shared<SolidColorTexture>(color)} {}
+
+    /**
+     * @brief Construct a new Isotropic object
+     * 
+     * @param albedo_ the Texture that will be used to attenuate any light ray that is scattered by the material.
+     */
+    Isotropic(std::shared_ptr<Texture> albedo_) : albedo {albedo_} {}
+
+        /**
+     * @brief Returns information about how light scatters in the Isotropic material (randomly).
+     * 
+     * @param ray_in The incoming light ray.
+     * @param hit_record The information about where a light ray collided with a surface, and what the surface was.
+     * @return ScatterRecord detailing how the light behaves after the collision 
+     */
+    ScatterRecord scatter(const Ray3D& ray_in, const HitRecord& hit_record) const override {
+        constexpr bool success = true;  //always successful
+        Vector3D random_direction = Vector3D::random_sphere_unit_vector();
+        Ray3D refracted_ray {hit_record.point, random_direction, ray_in.time()};
+        Color attenuation = albedo->value(hit_record.u, hit_record.v, hit_record.point);
+        return ScatterRecord{success, refracted_ray, attenuation};  
+    }
+
+private:
+    std::shared_ptr<Texture> albedo;
+};
+
+
 #endif

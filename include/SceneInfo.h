@@ -15,6 +15,7 @@
 #include "Box.h"
 #include "RotateY.h"
 #include "Translate.h"
+#include "ConstantMedium.h"
 
 //Scene Tag
 struct RandomSphereScene {};
@@ -381,6 +382,7 @@ inline HittableList make_world<CornellBoxScene>() {
     auto green = std::make_shared<Lambertian>(Color{.12, .45, .15});
     auto light = std::make_shared<DiffuseLights>(Color{15, 15, 15});    //brightness = 15
 
+    //Cornell box
     world.add(std::make_shared<Quad>(Vector3D{555, 0, 0}, Vector3D{0, 555, 0}, Vector3D{0, 0, 555}, green));
     world.add(std::make_shared<Quad>(Vector3D{0, 0, 0}, Vector3D{0, 555, 0}, Vector3D{0, 0, 555}, red));
     world.add(std::make_shared<Quad>(Vector3D{343, 554, 332}, Vector3D{-130, 0, 0}, Vector3D{0, 0, -105}, light));
@@ -388,6 +390,7 @@ inline HittableList make_world<CornellBoxScene>() {
     world.add(std::make_shared<Quad>(Vector3D{555, 555, 555}, Vector3D{-555, 0, 0}, Vector3D{0, 0, -555}, white));
     world.add(std::make_shared<Quad>(Vector3D{0, 0, 555}, Vector3D{555, 0, 0}, Vector3D{0, 555, 0}, white));
 
+    //objects inside
     std::shared_ptr<Hittable> box1 = box(Vector3D{0, 0, 0}, Vector3D{165, 330, 165}, white);
     box1 = std::make_shared<RotateY>(box1, 15);
     box1 = std::make_shared<Translate>(box1, Vector3D{265, 0, 295});
@@ -400,4 +403,71 @@ inline HittableList make_world<CornellBoxScene>() {
 
     return world;
 }
+
+
+
+//Scene Tag
+struct CornellSmokeScene {};
+
+/**
+ * @brief Defines the Camera parameters for the scene
+ * 
+ */
+template <>
+struct CameraParameters<CornellSmokeScene> {
+    constexpr static float_type aspect_ratio = 1;                                //desired image width to height ratio
+    constexpr static int image_width = 600;                                             //in pixels
+    constexpr static int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
+    constexpr static Vector3D camera_center {278, 278, -800};                                 //the center of the camera
+    constexpr static Vector3D camera_target {278, 278, 0};                                  //where the camera is pointing   
+    constexpr static Vector3D camera_lens_direction = camera_target - camera_center;    //the direction that the camera lens is pointing
+    constexpr static Vector3D camera_up_direction {0, 1, 0};                            //the direction that is "up" from the camera's perspective
+    constexpr static float_type defocus_angle = 0;                                     //the degree of the cone tip with apex at the focus center 
+                                                                                        //and base at the lens
+    constexpr static float_type focus_distance = 1;                                    //units in the direction of the lens that images will be in focus
+    constexpr static float_type vfov = 40;                                              //degrees
+    constexpr static int samples_per_pixel = 200;                                       //provides antialiasing
+    constexpr static int max_depth = 50;                                                //recursion limit
+
+    constexpr static Color background{0, 0, 0};
+};
+
+
+/**
+ * @brief Returns the world information for the scene
+ * 
+ * @return HittableList the world information
+ */
+template <>
+inline HittableList make_world<CornellSmokeScene>() {
+    HittableList world;
+
+    auto red = std::make_shared<Lambertian>(Color{.65, .05, .05});
+    auto white = std::make_shared<Lambertian>(Color{.73, .73, .73});
+    auto green = std::make_shared<Lambertian>(Color{.12, .45, .15});
+    auto light = std::make_shared<DiffuseLights>(Color{15, 15, 15});    //brightness = 15
+
+    //Cornell box
+    world.add(std::make_shared<Quad>(Vector3D{555, 0, 0}, Vector3D{0, 555, 0}, Vector3D{0, 0, 555}, green));
+    world.add(std::make_shared<Quad>(Vector3D{0, 0, 0}, Vector3D{0, 555, 0}, Vector3D{0, 0, 555}, red));
+    world.add(std::make_shared<Quad>(Vector3D{343, 554, 332}, Vector3D{-130, 0, 0}, Vector3D{0, 0, -105}, light));
+    world.add(std::make_shared<Quad>(Vector3D{0, 0, 0}, Vector3D{555, 0, 0}, Vector3D{0, 0, 555}, white));
+    world.add(std::make_shared<Quad>(Vector3D{555, 555, 555}, Vector3D{-555, 0, 0}, Vector3D{0, 0, -555}, white));
+    world.add(std::make_shared<Quad>(Vector3D{0, 0, 555}, Vector3D{555, 0, 0}, Vector3D{0, 555, 0}, white));
+
+    //objects inside
+    std::shared_ptr<Hittable> box1 = box(Vector3D{0, 0, 0}, Vector3D{165, 330, 165}, white);
+    box1 = std::make_shared<RotateY>(box1, 15);
+    box1 = std::make_shared<Translate>(box1, Vector3D{265, 0, 295});
+    world.add(std::make_shared<ConstantMedium>(box1, .01, Color{0, 0, 0}));
+
+    std::shared_ptr<Hittable> box2 = box(Vector3D{0, 0, 0}, Vector3D{165, 165, 165}, white);
+    box2 = std::make_shared<RotateY>(box2, -18);
+    box2 = std::make_shared<Translate>(box2, Vector3D{130, 0, 65});
+    world.add(std::make_shared<ConstantMedium>(box2, .01, Color{1, 1, 1}));
+
+    return world;
+}
+
+
 #endif

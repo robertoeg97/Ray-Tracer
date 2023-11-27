@@ -225,3 +225,8 @@ Implemented generic Box out of Quad primitives
 Implemented Classes for Arbitrary Rotation and Translation of Objects
 
 ![Boxes with Translation and Rotation](rendered_images/pngs/boxes_w_translation_rotation.png)
+
+
+Added constant density volumes as Hittable objects
+
+![Cornell Box With Smoky Volumes](rendered_images/pngs/cornell_box_smoky.png)
