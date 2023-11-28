@@ -16,6 +16,7 @@
 #include "RotateY.h"
 #include "Translate.h"
 #include "ConstantMedium.h"
+#include "BVH.h"
 
 //Scene Tag
 struct RandomSphereScene {};
@@ -465,6 +466,110 @@ inline HittableList make_world<CornellSmokeScene>() {
     box2 = std::make_shared<RotateY>(box2, -18);
     box2 = std::make_shared<Translate>(box2, Vector3D{130, 0, 65});
     world.add(std::make_shared<ConstantMedium>(box2, .01, Color{1, 1, 1}));
+
+    return world;
+}
+
+
+
+//Scene Tag
+struct ComplexCornellScene {};
+
+/**
+ * @brief Defines the Camera parameters for the scene
+ * 
+ */
+template <>
+struct CameraParameters<ComplexCornellScene> {
+    constexpr static float_type aspect_ratio = 1;                                //desired image width to height ratio
+    constexpr static int image_width = 800;                                             //in pixels
+    constexpr static int image_height = get_image_height(image_width, aspect_ratio);    //in pixels
+    constexpr static Vector3D camera_center {478, 278, -600};                                 //the center of the camera
+    constexpr static Vector3D camera_target {278, 278, 0};                                  //where the camera is pointing   
+    constexpr static Vector3D camera_lens_direction = camera_target - camera_center;    //the direction that the camera lens is pointing
+    constexpr static Vector3D camera_up_direction {0, 1, 0};                            //the direction that is "up" from the camera's perspective
+    constexpr static float_type defocus_angle = 0;                                     //the degree of the cone tip with apex at the focus center 
+                                                                                        //and base at the lens
+    constexpr static float_type focus_distance = 1;                                    //units in the direction of the lens that images will be in focus
+    constexpr static float_type vfov = 40;                                              //degrees
+    constexpr static int samples_per_pixel = 10000;                                       //provides antialiasing
+    constexpr static int max_depth = 40;                                                //recursion limit
+
+    constexpr static Color background{0, 0, 0};
+};
+
+
+/**
+ * @brief Returns the world information for the scene
+ * 
+ * @return HittableList the world information
+ */
+template <>
+inline HittableList make_world<ComplexCornellScene>() {
+    HittableList world;
+
+    //boxes that make different ground elevations
+    HittableList floor_boxes;
+    auto ground = std::make_shared<Lambertian>(Color{0.48, 0.83, 0.53});
+    int boxes_per_side = 20;
+    for (int i = 0; i < boxes_per_side; i++) {
+        for (int j = 0; j < boxes_per_side; j++) {
+            float_type w = 100.0;
+            float_type x0 = -1000.0 + i*w;
+            float_type z0 = -1000.0 + j*w;
+            float_type y0 = 0.0;
+            float_type x1 = x0 + w;
+            float_type y1 = Random::random_float(1,101);
+            float_type z1 = z0 + w;
+            floor_boxes.add(box(Vector3D{x0,y0,z0}, Vector3D{x1,y1,z1}, ground));
+        }
+    }
+    world.add(std::make_shared<BVH_node>(floor_boxes));
+
+    //light
+    auto light = std::make_shared<DiffuseLights>(Color{7, 7, 7});
+    world.add(std::make_shared<Quad>(Vector3D{123,554,147}, Vector3D{300,0,0}, Vector3D{0,0,265}, light));
+
+    //moving sphere
+    auto center1 = Vector3D{400, 400, 200};
+    auto center2 = center1 + Vector3D{30,0,0};
+    auto sphere_material = std::make_shared<Lambertian>(Color{0.7, 0.3, 0.1});
+    world.add(std::make_shared<Sphere>(center1, center2, 50, sphere_material));
+
+    //more spheres
+    world.add(std::make_shared<Sphere>(Vector3D{260, 150, 45}, 50, std::make_shared<Dielectric>(1.5)));
+    world.add(std::make_shared<Sphere>(Vector3D{0, 150, 145}, 50, std::make_shared<Metal>(Color{0.8, 0.8, 0.9}, 1.0)));
+
+    //subsurface medium
+    auto boundary = std::make_shared<Sphere>(Vector3D{360,150,145}, 70, std::make_shared<Dielectric>(1.5));
+    world.add(boundary);
+    world.add(std::make_shared<ConstantMedium>(boundary, 0.2, Color{0.2, 0.4, 0.9}));
+
+    //thin mist over everything
+    boundary = std::make_shared<Sphere>(Vector3D{0,0,0}, 5000, std::make_shared<Dielectric>(1.5));
+    world.add(std::make_shared<ConstantMedium>(boundary, .0001, Color{1,1,1}));
+
+    //earth map
+    auto emat = std::make_shared<Lambertian>(std::make_shared<ImageTexture>("earthmap.jpg"));
+    world.add(std::make_shared<Sphere>(Vector3D{400,200,400}, 100, emat));
+
+    //perlin noise sphere
+    auto pertext = std::make_shared<NoiseTexture>(0.1);
+    world.add(std::make_shared<Sphere>(Vector3D{220,280,300}, 80, std::make_shared<Lambertian>(pertext)));
+
+    //cube made of spheres
+    HittableList sphere_cube;
+    auto white = std::make_shared<Lambertian>(Color{.73, .73, .73});
+    int ns = 1000;
+    for (int j = 0; j < ns; j++) {
+        sphere_cube.add(make_shared<Sphere>(Vector3D::random(0,165), 10, white));
+    }
+    world.add(std::make_shared<Translate>(
+        std::make_shared<RotateY>(
+            std::make_shared<BVH_node>(sphere_cube), 15),
+            Vector3D{-100,270,395}
+        )
+    );
 
     return world;
 }

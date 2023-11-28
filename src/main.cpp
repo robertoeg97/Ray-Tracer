@@ -8,7 +8,7 @@
 #include "BVH.h"
 
 //Scene Tag: defined in SceneInfo.h
-using Scene = CornellSmokeScene;
+using Scene = ComplexCornellScene;
 
 /**
  * @brief renders the scene Scene and writes the .ppm file information to filename

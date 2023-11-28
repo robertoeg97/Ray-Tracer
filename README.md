@@ -230,3 +230,8 @@ Implemented Classes for Arbitrary Rotation and Translation of Objects
 Added constant density volumes as Hittable objects
 
 ![Cornell Box With Smoky Volumes](rendered_images/pngs/cornell_box_smoky.png)
+
+
+Cool Render
+
+![Complex Cornell Render](rendered_images/pngs/complex_cornell_render.png)
