@@ -1,5 +1,6 @@
 /debug/
 /release/
 /.vscode/
+/build/
 *.o
 *.exe
